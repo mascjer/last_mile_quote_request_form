@@ -1,0 +1,16 @@
+version: '3'
+services:
+  local:
+    restart: on-failure:3
+    build: ./lms_app
+    image: lms_quote_request_form_image:latest
+    ports:
+      - 3001:8050
+    volumes:
+      - ./:/app
+    env_file:
+      - secrets
+    command: python lms_app/app.py
+
+
+
