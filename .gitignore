@@ -1,0 +1,7 @@
+config/secrets
+*.__pycache__
+*.pyc
+*.ipynb
+*.xlsx
+*.csv
+Jenkinsfile
