@@ -50,6 +50,18 @@ app.layout = serve_layout()
 add_shared_callbacks(app)
 
 
+# in order to work on shinyproxy
+# see https://support.openanalytics.eu/t/what-is-the-best-way-of-delivering-static-assets-to-the-client-for-custom-apps/363/5
+app.config.suppress_callback_exceptions = True
+app.config.update({
+    # as the proxy server will remove the prefix
+    'routes_pathname_prefix': ''
+
+    # the front-end will prefix this string to the requests
+    # that are made to the proxy server
+    , 'requests_pathname_prefix':''
+})
+
 
 #run app
 if __name__ == '__main__':
