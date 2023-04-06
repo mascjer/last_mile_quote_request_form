@@ -11,13 +11,13 @@ from time import sleep
 from datetime import date
 import pages.ui_assets as ui
 
-from pages.finished_callbacks import add_finished_callbacks
+from pages.air_exp_finished_callbacks import add_air_exp_finished_callbacks
 
-add_finished_callbacks(dash)
+add_air_exp_finished_callbacks(dash)
 
 
 dash.register_page(__name__, 
-                    path='/finished',
+                    path='/air_exp_finished',
                     title='Last Mile: Quote Request Form',
                     name='Last Mile: Quote Request Form')
 
@@ -30,7 +30,7 @@ layout = dbc.Container([
         html.Br(),
         html.Br(),
 
-        dcc.Loading(children = [html.Div(id='prompt')], fullscreen = True),
+        dcc.Loading(children = [html.Div(id='prompt-1')], fullscreen = True),
 
         dbc.Row([
             dbc.Col([
@@ -44,7 +44,7 @@ layout = dbc.Container([
 
         dbc.Row([
             dbc.Col([
-                html.Div(id='confirmation-div'),
+                html.Div(id='confirmation-div-1'),
             ],width={"size": 6, "offset": 3}, md=6, align='stretch'),
         ]),
 

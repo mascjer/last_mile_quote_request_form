@@ -107,6 +107,10 @@ def explode_scope_data(scope_df):
     return scope_df
 
 
+def explode_item_data(upload_item_df):
+    upload_item_df = upload_item_df.explode('QUANTITY')
+    return upload_item_df
+
 ### USED IN SHARED_CALLBACKS ###
 def retrieve_item_df(df):
     global item_df
@@ -164,9 +168,13 @@ def import_commodity(commodity):
 
 
 ### USED IN SHARED_CALLBACKS ###
-def import_packaging(packaging):
-    request_df['PACKAGING'] = [packaging]
-    
+def import_packaging(palletized, packaging):
+    if palletized == None:
+        if palletized == True:
+            return 'pallet'
+        else:
+            return packaging
+    return None
 
 ### USED IN SHARED_CALLBACKS ###
 def import_haz_mat(haz_mat):
@@ -351,7 +359,7 @@ def import_quote_date():
     utc_time = datetime.utcnow()
     utc_time_string = utc_time.strftime('%Y-%m-%d %H:%M:%S')
 
-    request_df['QUOTE_DATE'] = [utc_time_string]
+    return utc_time_string
 
 ### USED TO CLEAR QUOTE DATE ###
 def clear_quote_date(quote_date):
@@ -366,7 +374,7 @@ def clear_dataframe():
     import_additional_insurance(None)
     import_value(None)
     import_commodity(None)
-    import_packaging(None)
+    #import_packaging(None)
     import_haz_mat(None)
     import_un_num(None)
     import_class_num(None)
@@ -410,7 +418,7 @@ def clear_dataframe_after_service():
     import_additional_insurance(None)
     import_value(None)
     import_commodity(None)
-    import_packaging(None)
+    #import_packaging(None)
     import_haz_mat(None)
     import_un_num(None)
     import_class_num(None)

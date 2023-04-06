@@ -154,6 +154,7 @@ def trans_mode_1():
 def create_air_euv():
         return html.Div([
             html.Div(id='garbage-output-0'),
+            html.Div(id='garbage-div-2'),
 
             html.Br(),
             html.P(["* - Required field"]
@@ -473,7 +474,7 @@ def create_air_euv():
                                 dbc.Label('Quantity',style={'font-weight':'bold', 'text-align': 'center'})
                             ],md= 2),
                             dbc.Col([
-                                dbc.Label('Weight (pounds)',style={'font-weight':'bold', 'text-align': 'center'})
+                                dbc.Label('Weight per Piece (pounds)',style={'font-weight':'bold', 'text-align': 'center'})
                             ],md= 2),
                             dbc.Col([
                                 dbc.Label('Length (inches)',style={'font-weight':'bold', 'text-align': 'center'})
@@ -506,7 +507,7 @@ def create_air_euv():
                                 dbc.Label('Quantity',style={'font-weight':'bold', 'text-align': 'center'})
                             ],md= 2),
                             dbc.Col([
-                                dbc.Label('Weight (pounds)',style={'font-weight':'bold', 'text-align': 'center'})
+                                dbc.Label('Weight per Piece (pounds)',style={'font-weight':'bold', 'text-align': 'center'})
                             ],md= 2),
                             dbc.Col([
                                 dbc.Label('Length (inches)',style={'font-weight':'bold', 'text-align': 'center'})
@@ -698,12 +699,16 @@ def create_air_euv():
             html.Br(),
 
             dbc.Label("24.Please check this button if you need additional BDM support"),
-            dbc.Checklist(
-                options=[
-                    {"label": "Additional Support Needed", "value": True},
-                ],
-                id="additional-support-checklist",
-            ),
+            dbc.Col([
+                dcc.Dropdown(
+                        id = 'additional-support-drop',
+                        placeholder = 'Yes/No',
+                        options=[
+                            {'label': 'Yes', 'value': True},
+                            {'label': 'No', 'value': False},
+                        ]
+                    ),
+            ], md=2),
 
             html.Div(id='additional-support-div'),
 
@@ -713,6 +718,8 @@ def create_air_euv():
 def first_final_service():
     return html.Div([
         dbc.Label("2.What type of service are they requesting?"),
+
+        html.Div(id='garbage-div'),
 
         #removing as it is not ready to be deployed yet
         #dbc.Row([
@@ -769,6 +776,7 @@ def first_final_service():
 def create_first_final():
     return html.Div([
         html.Div(id='garbage-output-0'),
+        html.Div(id='garbage-div-1'),
 
         html.Br(),
         html.P(["* - Required field"]
@@ -968,7 +976,7 @@ def create_first_final():
                             dbc.Label('Quantity',style={'font-weight':'bold', 'text-align': 'center'})
                         ],md= 2),
                         dbc.Col([
-                            dbc.Label('Weight (pounds)',style={'font-weight':'bold', 'text-align': 'center'})
+                            dbc.Label('Weight per Piece (pounds)',style={'font-weight':'bold', 'text-align': 'center'})
                         ],md= 2),
                         dbc.Col([
                             dbc.Label('Length (inches)',style={'font-weight':'bold', 'text-align': 'center'})
@@ -1001,7 +1009,7 @@ def create_first_final():
                             dbc.Label('Quantity',style={'font-weight':'bold', 'text-align': 'center'})
                         ],md= 2),
                         dbc.Col([
-                            dbc.Label('Weight (pounds)',style={'font-weight':'bold', 'text-align': 'center'})
+                            dbc.Label('Weight per Piece (pounds)',style={'font-weight':'bold', 'text-align': 'center'})
                         ],md= 2),
                         dbc.Col([
                             dbc.Label('Length (inches)',style={'font-weight':'bold', 'text-align': 'center'})
@@ -1136,12 +1144,16 @@ def create_first_final():
         html.Br(),
 
         dbc.Label("16.Please check this button if you need additional BDM support"),
-        dbc.Checklist(
-            options=[
-                {"label": "Additional Support Needed", "value": True},
-            ],
-            id="additional-support-checklist",
-        ),
+        dbc.Col([
+            dcc.Dropdown(
+                        id = 'additional-support-drop',
+                        placeholder = 'Yes/No',
+                        options=[
+                            {'label': 'Yes', 'value': True},
+                            {'label': 'No', 'value': False},
+                        ]
+                    ),
+        ], md=2),
 
         html.Div(id='additional-support-div'),
 

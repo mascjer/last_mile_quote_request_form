@@ -27,6 +27,7 @@ def add_shared_callbacks(app):
     '''
 
     @app.callback(
+        Output('data-storage', 'data'),
         Output('air-btn','n_clicks'),
         Output('euv-btn','n_clicks'),
         Output('first-btn','n_clicks'),
@@ -49,13 +50,13 @@ def add_shared_callbacks(app):
             trans_mode = 'first_mile'
         if final == 1 and air+euv+first == 0:
             trans_mode = 'final_mile'
-
-        if trans_mode is not None:
-            import_trans_mode(trans_mode)
-        elif trans_mode != '':
-            import_trans_mode(trans_mode)
         
-        return 0,0,0,0
+        cols = {'TRANSPORTATION_MODE':[None]}
+        df = pd.DataFrame(cols)
+
+        df['TRANSPORTATION_MODE'] = trans_mode
+        
+        return df.to_json(date_format='iso', orient='split'), 0,0,0,0
 
 
     @app.callback(
@@ -72,56 +73,35 @@ def add_shared_callbacks(app):
             ccode_exists = valid_input(ccode)
             empcode_exists = valid_input(empcode)
 
-            print(ccode_exists, empcode_exists)
+            ccode_valid = False
+            empcode_valid = False
 
             false_list = []
 
             if ccode_exists == False:
                 false_list.append('C-Code')
-                import_customer_code(None)
             else:
                 ccode = ccode.upper()
                 ccode_valid = check_c_codes(ccode)
-                print(ccode_valid)
                 if ccode_valid == False:
                     false_list.append('C-Code')
-                    import_customer_code(None)
-                else:
-                    import_customer_code(ccode)
 
             if empcode_exists == False:
                 false_list.append('Seven Letter')
-                import_seven_letter(None)
             else:
                 empcode = empcode.upper()
                 empcode_valid = check_emp_codes(empcode)
-                print(empcode_valid)
                 if empcode_valid == False:
                     false_list.append('Seven Letter')
-                    import_seven_letter(None)
-                else:
-                    import_seven_letter(empcode)
+
+            
 
             str = 'Submit a valid: '
             combined_str = ', '.join(false_list)
             output_str = str+combined_str
 
-            if ccode_exists == False or empcode_exists == False:
+            if ccode_valid == False or empcode_valid == False:
                 return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
-            elif ccode_exists == True:
-                ccode = ccode.upper()
-                ccode_valid = check_c_codes(ccode)
-                if ccode_valid == False:
-                    return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
-                else:
-                    return ''
-            elif empcode_exists == True:
-                empcode = empcode.upper()
-                empcode_valide = check_emp_codes(empcode)
-                if empcode_valide == False:
-                    return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
-                else:
-                    return ''
             else:
                 return ''
         else:
@@ -137,10 +117,8 @@ def add_shared_callbacks(app):
         if n_clicks > 0:
             quote_freight_exists = valid_input(quote_freight)
             if quote_freight_exists == False:
-                import_quote_or_on_hand(None)
                 return html.P('Select quote only or freight on hand', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             else:
-                import_quote_or_on_hand(quote_freight)
                 return ''
         else:
             return ''
@@ -149,19 +127,16 @@ def add_shared_callbacks(app):
     @app.callback(
         Output("additional-support-div","children"),
         Input("submit-btn","n_clicks"),
-        State("additional-support-checklist", "value"),
+        State("additional-support-drop", "value"),
     )
-    def check_quote_freight(n_clicks, additional_support):
+    def check_additional_support(n_clicks, additional_support):
         if n_clicks > 0:
             if additional_support is not None:
-                if additional_support[0] == True:
-                    import_additional_support(additional_support[0])
+                if additional_support == True:
                     return ''
                 else:
-                    import_additional_support(False)
                     return ''
             else:
-                import_additional_support(False)
                 return ''
         else:
             return ''
@@ -176,10 +151,8 @@ def add_shared_callbacks(app):
         if n_clicks > 0:
             palletized_exists = valid_input(palletized)
             if palletized_exists == False:
-                import_is_palletized(None)
                 return html.P('Select yes or no', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             else:
-                import_is_palletized(palletized)
                 return ''
         else:
             return ''
@@ -194,10 +167,8 @@ def add_shared_callbacks(app):
         if n_clicks > 0:
             commodity_exists = valid_input(commodity)
             if commodity_exists == False:
-                import_commodity(None)
                 return html.P('Submit a valid commodity', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             else:
-                import_commodity(commodity)
                 return ''
         else:
             return ''
@@ -224,10 +195,8 @@ def add_shared_callbacks(app):
         if n_clicks > 0:
             additional_insurance_exists = valid_input(additional_insurance)
             if additional_insurance_exists == False:
-                import_additional_insurance(None)
                 return html.P('Select yes or no', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0.5%'})
             else:
-                import_additional_insurance(additional_insurance)
                 return ''
         else:
             return ''
@@ -261,19 +230,15 @@ def add_shared_callbacks(app):
 
                     try:
                         value = float(value)
-                        import_value(value)
                         return ''
                     except:
-                        import_value(None)
                         return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
 
                 else:
                     return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             else:
-                import_value(None)
                 return ''
         else:
-            import_value(None)
             return ''
 
 
@@ -306,16 +271,12 @@ def add_shared_callbacks(app):
             if palletized == False:
                 packaging_exists = valid_input(packaging)
                 if packaging_exists == False:
-                    import_packaging(None)
                     return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
                 else:
-                    import_packaging(packaging)
                     return ''
             else:
-                import_packaging('pallet')
                 return ''
         else:
-            import_packaging(None)
             return ''
 
 
@@ -352,10 +313,8 @@ def add_shared_callbacks(app):
         if n_clicks > 0:
             hazmat_exists = valid_input(hazmat)
             if hazmat_exists == False:
-                import_haz_mat(None)
                 return html.P('Select yes or no', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0.5%'})
             else:
-                import_haz_mat(hazmat)
                 return ''
         else:
             return ''
@@ -384,21 +343,12 @@ def add_shared_callbacks(app):
 
                         if un_exists == False:
                             false_list.append('UN #')
-                            import_un_num(None)
-                        else:
-                            import_un_num(un)
 
                         if cls_exists == False:
                             false_list.append('Class #')
-                            import_class_num(None)
-                        else:
-                            import_class_num(cls)
 
                         if packing_exists == False:
                             false_list.append('Packing Group #')
-                            import_pg_num(None)
-                        else:
-                            import_pg_num(packing)
 
                         str = 'Invalid entries: '
                         combined_str = ', '.join(false_list)
@@ -407,16 +357,10 @@ def add_shared_callbacks(app):
                         return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
 
                     elif un_exists == True and cls_exists == True and packing_exists == True:
-                        import_un_num(un)
-                        import_class_num(cls)
-                        import_pg_num(packing)
                         return ''
                     else:
                         return ''
                 else:
-                    import_un_num(None)
-                    import_class_num(None)
-                    import_pg_num(None)
                     return ''
             else:
                 return ''
@@ -517,6 +461,7 @@ def add_shared_callbacks(app):
     @app.callback(
     Output('container-output', 'children'),
     Output('output-prompt', 'hidden'),
+    Output('data-storage-prelim-item', 'data'),
     Input("submit-btn","n_clicks"),
     State('count-input','value'),
     State({'type': 'weight-input', 'index': ALL}, 'value'),
@@ -547,11 +492,12 @@ def add_shared_callbacks(app):
                 if quantity_exists == False:
                     quantity[i] = '***Invalid***'
 
-                chunk_list = ['temp_id',  quantity[i], weight[i], length[i], width[i], height[i]]
+                chunk_list = [ quantity[i], weight[i], length[i], width[i], height[i]]
                 item_list.append(chunk_list)
 
-            item_df = pd.DataFrame(item_list, columns = ['QUOTE_ID', 'QUANTITY', 'WEIGHT', 'LENGTH', 'WIDTH', 'HEIGHT'])
-            retrieve_item_df(item_df)
+            item_df = pd.DataFrame(item_list, columns = ['QUANTITY', 'WEIGHT', 'LENGTH', 'WIDTH', 'HEIGHT'])
+
+            item_storage = item_df.to_dict()
 
             return html.Div([
                 html.Div([
@@ -582,9 +528,10 @@ def add_shared_callbacks(app):
                     ])
                 ])
                 for i in range(0,count)
-            ]), False
+            ]), False, item_storage
+
         else:
-            return '', True
+            return '', True, None
 
 
     app.clientside_callback(

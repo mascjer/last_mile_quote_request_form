@@ -7,12 +7,13 @@ import os
 import dash
 
 
+### Provides connection details to sandbox to push/pull 
+### data into LMS_QUOTE, LMS_QUOTE_ITEMS, and LMS_QUOTE_SCOPE
 
 def get_snowflake_connection():
 # Connection details
     USER = os.environ['USER']
-    #PASSWORD = os.environ['PASSWORD']
-    PASSWORD = 'Delano!Athl3tics' #os.environ['PASSWORD']
+    PASSWORD = os.environ['PASSWORD']
     ACCOUNT = "sandbox_chrobinson.east-us-2.azure"
     WAREHOUSE = "SURFACETRANS_WAREHOUSE"
     SCHEMA = "BASE"

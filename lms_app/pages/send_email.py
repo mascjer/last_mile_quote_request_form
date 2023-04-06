@@ -13,6 +13,12 @@ import tempfile
 import base64
 import mimetypes
 
+from database_functions import *
+from pages.non_callback_functions import *
+from pages.dataframe_builder import *
+from pages.send_email import *
+
+
 
 def prettify_outputs(value):
     if isinstance(value, str):
@@ -24,13 +30,6 @@ def prettify_outputs(value):
 
 
 def prettify_df(df, trans_mode):
-    if trans_mode== 'Air Expedite':
-        df = df.drop(columns=['Pickup Scope', 'Delivery Scope'])
-    elif trans_mode == 'Exclusive Use Vehicle':
-        df = df.drop(columns=['Pickup Scope', 'Delivery Scope'])
-    else:
-        df = df.drop(columns=['Scope'])
-
     df = df.T
     df = df.dropna()
 
@@ -52,17 +51,29 @@ def determine_recipient(trans_mode):
         return 'Lastmilequotes@chrobinson.com'
 
 
-def send_quote_email(request_df, item_df, scope_df, city, state):
-    requestor = request_df['Seven Letter'][0] + '@chrobinson.com'
-    scope_df = scope_df.drop(columns='INCLUDES_OTHER_SCOPE')
-    request_df = request_df.applymap(lambda x: prettify_outputs(x))
-    trans_mode = request_df['Transportation Mode'][0]
+def send_quote_email(final_store, item_store, scope_store, additional_contacts, additional_cust_info):
+
+    email_df = pd.DataFrame.from_dict([final_store])
+    email_scope_df = pd.DataFrame.from_dict([scope_store])
+    email_item_df = pd.DataFrame.from_dict(item_store)
+
+    email_scope_df = explode_scope_data(email_scope_df)
+
+    requestor = email_df['SEVEN_LETTER'][0] + '@chrobinson.com'
+    email_df = email_df.applymap(lambda x: prettify_outputs(x))
+    trans_mode = email_df['TRANSPORTATION_MODE'][0]
     recipient = determine_recipient(trans_mode)
-    quote_id = item_df['QUOTE_ID'][0]
+    quote_id = email_item_df['QUOTE_ID'][0]
+    city = email_df['WAREHOUSE_CITY'][0]
+    state = email_df['WAREHOUSE_STATE'][0]
 
+    email_df['TOTAL_WEIGHT'] = total_weight(email_item_df)
 
-    request_df = prettify_df(request_df, trans_mode)
-    scope_df = scope_df.applymap(lambda x: prettify_outputs(x))
+    email_df['ADDITIONAL_CONTACTS'] = additional_contacts
+    email_df['ADDITIONAL_DATE_INFORMATION'] = additional_cust_info
+
+    email_df = prettify_df(email_df, trans_mode)
+    email_scope_df = email_scope_df.applymap(lambda x: prettify_outputs(x))
 
     msg = MIMEMultipart()
     html = """\
@@ -78,16 +89,16 @@ def send_quote_email(request_df, item_df, scope_df, city, state):
         {2}
     </body>
     </html>
-    """.format(request_df.to_html(), item_df.to_html(index=False), scope_df.to_html(index=False))
+    """.format(email_df.to_html(), email_item_df.to_html(index=False), email_scope_df.to_html(index=False))
 
     part1 = MIMEText(html, 'html')
     msg.attach(part1)
 
+    recipients = [recipient,requestor]
 
     msg["Subject"] = "{} Quote Request Form Submission Out of {}, {}, (Quote ID: {})".format(trans_mode, city, state, quote_id)
     msg["From"] = requestor
-    msg["To"] = recipient
-    msg['Cc'] = requestor
+    msg["To"] = ", ".join(recipients)
     msg['X-Priority'] = '1'
 
     smtp_obj = smtplib.SMTP("mail.chrobinson.com", 25)
@@ -95,18 +106,33 @@ def send_quote_email(request_df, item_df, scope_df, city, state):
     smtp_obj.quit()
 
 
-def send_warehousing_email(request_df):
-    trans_mode = request_df['TRANSPORTATION_MODE'][0]
-    recipient = determine_recipient(trans_mode)
-    requestor = request_df['SEVEN_LETTER'][0] + '@chrobinson.com'
-    quote_id = request_df['QUOTE_ID'][0]
+def send_air_euv_email(final_store, item_store, pick_scope_store, drop_scope_store, additional_contacts, pickup_additional_input, drop_additional_input):
+    email_df = pd.DataFrame.from_dict([final_store])
+    email_pick_scope_df = pd.DataFrame.from_dict([pick_scope_store])
+    email_drop_scope_df = pd.DataFrame.from_dict([drop_scope_store])
+    email_item_df = pd.DataFrame.from_dict(item_store)
 
-    if trans_mode == 'first_mile':
-        trans_mode = 'First Mile'
-    elif trans_mode == 'final_mile':
-        trans_mode = 'Final Mile'
-    else:
-        trans_mode = ''
+    email_pick_scope_df = explode_scope_data(email_pick_scope_df)
+    email_drop_scope_df = explode_scope_data(email_drop_scope_df)
+
+    email_scope_df = pd.concat([email_pick_scope_df, email_drop_scope_df], ignore_index=True)
+
+    requestor = email_df['SEVEN_LETTER'][0] + '@chrobinson.com'
+    email_df = email_df.applymap(lambda x: prettify_outputs(x))
+    trans_mode = email_df['TRANSPORTATION_MODE'][0]
+    recipient = determine_recipient(trans_mode)
+    quote_id = email_item_df['QUOTE_ID'][0]
+    city = email_df['ORIGIN_CITY'][0]
+    state = email_df['ORIGIN_STATE'][0]
+
+    email_df['TOTAL_WEIGHT'] = total_weight(email_item_df)
+
+    email_df['ADDITIONAL_CONTACTS'] = additional_contacts
+    email_df['ADDITIONAL_PICKUP_INFORMATION'] = pickup_additional_input
+    email_df['ADDITIONAL_DELIVERY_INFORMATION'] = drop_additional_input
+    
+    email_df = prettify_df(email_df, trans_mode)
+    email_scope_df = email_scope_df.applymap(lambda x: prettify_outputs(x))
 
     msg = MIMEMultipart()
     html = """\
@@ -114,19 +140,33 @@ def send_warehousing_email(request_df):
     <head>
     </head>
     <body>
-        {0} is requesting a {1} warehousing quote request.
+        Quote Request
+        {0}
+        Items
+        {1}
+        Scope
+        {2}
     </body>
     </html>
-    """.format(requestor, trans_mode)
+    """.format(email_df.to_html(), email_item_df.to_html(index=False), email_scope_df.to_html(index=False))
 
     part1 = MIMEText(html, 'html')
     msg.attach(part1)
-            
-    msg["Subject"] = "{} Warehousing Quote Request Form Submission, (Quote ID: {})".format(trans_mode, quote_id)
+
+    recipients = [recipient,requestor]
+
+    msg["Subject"] = "{} Quote Request Form Submission Out of {}, {}, (Quote ID: {})".format(trans_mode, city, state, quote_id)
     msg["From"] = requestor
-    msg["To"] = recipient
-    msg['Cc'] = requestor
+    msg["To"] = ", ".join(recipients)
+    msg['X-Priority'] = '1'
 
     smtp_obj = smtplib.SMTP("mail.chrobinson.com", 25)
     smtp_obj.sendmail(msg["From"], msg["To"], msg.as_string())
     smtp_obj.quit()
+
+
+def total_weight(email_item_df):
+    temp_item_df = email_item_df[['QUANTITY', 'WEIGHT']]
+    temp_item_df['ROW_WEIGHT'] = temp_item_df['QUANTITY'].astype(float) * temp_item_df['WEIGHT'].astype(float)
+    total_weight = temp_item_df['ROW_WEIGHT'].sum()
+    return total_weight

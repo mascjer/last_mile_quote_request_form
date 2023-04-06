@@ -20,21 +20,20 @@ from pages.dataframe_builder import *
 from pages.send_email import *
 
 
-def add_finished_callbacks(dash):
+def add_air_exp_finished_callbacks(dash):
     '''
     THESE CALLBACKS WILL ONLY APPEAR ON THE FINISHED PAGE
     '''
 
     @dash.callback(
-        Output("confirmation-div","children"),
-        Input("data-storage-final","data")
+        Output("confirmation-div-1","children"),
+        Input("data-storage-final-session","data")
     )
-    def populate_tables(final_data):
-        good_modes = ['first_mile','final_mile']
-        good_services = ['store_pickup/delivery','residential_pickup/delivery']
+    def populate_ae_tables(final_data):
+        good_modes = ['air_expedite','exclusive_use_vehicle']
 
         if final_data is not None:
-            if final_data['TRANSPORTATION_MODE'] in good_modes and final_data['SERVICE'] in good_services:
+            if final_data['TRANSPORTATION_MODE'] in good_modes:
                 final_request_df = pd.DataFrame.from_dict([final_data])
                 nice_request_df = prettify_df(final_request_df)
 
@@ -53,27 +52,29 @@ def add_finished_callbacks(dash):
                 return dcc.Location(pathname="/", id="first-final-redirect")
         else:
             return dcc.Location(pathname="/", id="first-final-redirect")
-
+        
     
     @dash.callback(
-        Output("prompt","children"),
-        Input("data-storage-final","data"),
-        Input("data-storage-scope-final","data"),
-        Input("data-storage-item-final","data")
+        Output("prompt-1","children"),
+        Input("data-storage-final-session","data"),
+        Input("data-storage-pick-scope-final","data"),
+        Input("data-storage-drop-scope-final","data"),
+        Input("data-storage-ae-item-final","data")
     )
-    def populate_tables(final_data, final_scope, final_item):
-        good_modes = ['first_mile','final_mile']
-        good_services = ['store_pickup/delivery','residential_pickup/delivery']
+    def populate_tables(final_data, final_pick_scope, final_drop_score, final_item):
+        good_modes = ['air_expedite','exclusive_use_vehicle']
 
         if final_data is not None:
-            if final_data['TRANSPORTATION_MODE'] in good_modes and final_data['SERVICE'] in good_services:
+            if final_data['TRANSPORTATION_MODE'] in good_modes:
                 data_to_database = pd.DataFrame.from_dict([final_data])
-                scope_to_database = pd.DataFrame.from_dict([final_scope])
+                pick_scope_to_database = pd.DataFrame.from_dict([final_pick_scope])
+                drop_scope_to_database = pd.DataFrame.from_dict([final_drop_score])
                 item_to_database = pd.DataFrame.from_dict(final_item)
 
-                scope_to_database = explode_scope_data(scope_to_database)
+                pick_scope_to_database = explode_scope_data(pick_scope_to_database)
+                drop_scope_to_database = explode_scope_data(drop_scope_to_database)
 
-                print(item_to_database)
+                scope_to_database = pd.concat([pick_scope_to_database, drop_scope_to_database], ignore_index=True)
 
                 write_to_lms_quote(data_to_database)
                 write_to_lms_quote_scope(scope_to_database)
@@ -82,10 +83,10 @@ def add_finished_callbacks(dash):
                 return ['']
 
             else:
-                return dcc.Location(pathname="/", id="first-final-redirect")
+                return dcc.Location(pathname="/", id="air-euv-redirect")
         else:
-            return dcc.Location(pathname="/", id="first-final-redirect")
-
+            return dcc.Location(pathname="/", id="air-euv-redirect")
+    
 
     def prettify_df(df):
         df = df.drop(columns=['QUOTE_ID', 'QUOTE_DATE'])

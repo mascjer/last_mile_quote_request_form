@@ -9,6 +9,7 @@ from datetime import date
 from dash import dash_table as dt
 import numpy as np
 import pages.ui_assets as ui
+import json
 from dash.exceptions import PreventUpdate
 from pages.non_callback_functions import *
 from database_functions import *
@@ -30,34 +31,41 @@ def add_first_final_callbacks(dash):
     '''
 
     @dash.callback(
-        #Output('local-pick-drop-btn','n_clicks'),
+        Output('garbage-div', 'children'),
+        Output('data-storage-1', 'data'),
         Output('store-pick-drop-btn','n_clicks'),
         Output('res-pick-drop-btn','n_clicks'),
-        #Output('warehousing-btn','n_clicks'),
-        #Input('local-pick-drop-btn','n_clicks'),
         Input('store-pick-drop-btn','n_clicks'),
         Input('res-pick-drop-btn','n_clicks'),
-        #Input('warehousing-btn','n_clicks'),
+        Input('data-storage', 'data')
     )
-    def get_first_final_service(store, residential):
+    def get_first_final_service(store, residential, data_storage):
 
         clear_dataframe_after_service()
+
+        if data_storage is not None:
         
-        service = np.NaN
+            data_df = pd.read_json(data_storage, orient = 'split')
 
-        if store == 1 and residential == 0:
-            service = 'store_pickup/delivery'
-        if residential == 1 and store == 0:
-            service = 'residential_pickup/delivery'
+            service = np.NaN
 
-        if service is None:
-            print('not entered yet')
-        if service == '':
-            print('not entered yet')
+            if store == 1 and residential == 0:
+                service = 'store_pickup/delivery'
+            if residential == 1 and store == 0:
+                service = 'residential_pickup/delivery'
+
+            if service is None:
+                print('not entered yet')
+            if service == '':
+                print('not entered yet')
+
+            data_df['SERVICE'] = service
+
+            return [],data_df.to_json(date_format='iso', orient='split'), 0,0
+        
         else:
-            import_service(service)
-        
-        return 0,0
+            return dcc.Location(pathname="/", id="first-final-redirect"),None, 0,0
+
 
     @dash.callback(
         Output("other-input","disabled"),
@@ -143,10 +151,8 @@ def add_first_final_callbacks(dash):
         if n_clicks > 0:
             first_floor_exists = valid_input(first_floor)
             if first_floor_exists == False:
-                import_first_floor_pick(None)
                 return html.P('Select yes or no', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             else:
-                import_first_floor_pick(first_floor)
                 return ''
         else:
             return ''
@@ -163,13 +169,10 @@ def add_first_final_callbacks(dash):
             if first_floor == True:
                 freight_elavator_exists = valid_input(freight_elavator)
                 if freight_elavator_exists == False:
-                    import_has_freight_elevator(None)
                     return html.P('Select yes or no', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
                 else:
-                    import_has_freight_elevator(freight_elavator)
                     return ''
             else:
-                import_has_freight_elevator(None)
                 return ''
         else:
             return ''
@@ -183,10 +186,8 @@ def add_first_final_callbacks(dash):
     def check_scope(n_clicks, scope):
         if n_clicks > 0:
             if not scope:
-                import_stop_type(None)
                 return html.P('Select scope(s) of work', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             else:
-                import_stop_type('FIRSTFINAL')
                 return ''
         else:
             return ''
@@ -208,10 +209,9 @@ def add_first_final_callbacks(dash):
                     if disabled == False:
                         other_exists = valid_input(other)
                         if other_exists == False:
-                            import_other_scope(None)
                             return html.P('Submit a valid other scope', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
                         else:
-                            import_other_scope(other_exists)
+
                             return ''
                     else:
                         return ''
@@ -242,28 +242,14 @@ def add_first_final_callbacks(dash):
 
             false_list = []
 
-            if name_exists == False:
-                import_name(None)
-            else:
-                import_name(name)
-
             if phone_exists == True:
                 if phone_valid == False:
                     false_list.append('Contact Phone Number (XXX) XXX-XXXX')
                     import_phone(None)
-                else:
-                    import_phone(phone)
-            else:
-                import_phone(None)
 
             if email_exists == True:
                 if email_valid == False:
                     false_list.append('Contact Email')
-                    import_contact_email(None)
-                else:
-                    import_contact_email(email) 
-            else:
-                import_contact_email(None)
 
             str = 'These entries were invalid: '
             combined_str = ', '.join(false_list)
@@ -321,15 +307,9 @@ def add_first_final_callbacks(dash):
 
                 if city_exists == False:
                     false_list.append('City')
-                    import_city(None)
-                else:
-                    import_city(city)
 
                 if state_exists == False:
                     false_list.append('State')
-                    import_state(None)
-                else:
-                    import_state(state)
 
 
                 if wcode_exists == True:
@@ -337,16 +317,13 @@ def add_first_final_callbacks(dash):
                     valid_wcode = check_w_codes(wcode)
                     if valid_wcode == False:
                         false_list.append('Warehouse Code')
-                        import_wcode(None)
                         combined_str = ', '.join(false_list)
                         output_str = str+combined_str
                         return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
                     else:
-                        import_wcode(wcode)
                         return ''
                 else:
                     false_list.append('Warehouse Code')
-                    import_wcode(None)
                     combined_str = ', '.join(false_list)
                     output_str = str+combined_str
                     return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
@@ -377,27 +354,15 @@ def add_first_final_callbacks(dash):
 
                 if address_exists == False:
                     false_list.append('Address')
-                    import_address(None)
-                else:
-                    import_address(address)
 
                 if city_exists == False:
                     false_list.append('City')
-                    import_city(None)
-                else:
-                    import_city(city)
 
                 if state_exists == False:
                     false_list.append('State')
-                    import_state(None)
-                else:
-                    import_state(state)
 
                 if zip_exists == False:
                     false_list.append('Zip Code (XXXXX or XXXXX-XXXX)')
-                    import_zip(None)
-                else:
-                    import_zip(zip)
 
                 str = 'Submit a valid: '
                 combined_str = ', '.join(false_list)
@@ -422,13 +387,9 @@ def add_first_final_callbacks(dash):
         if n_clicks > 0:
             date_exp_exists = valid_input(date_exp)
             if date_exp_exists == False:
-                import_time_exp(None)
                 return html.P('Select a time expectation', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             else:
-                if import_time_exp != 'customer_specific_date':
-                    return import_time_exp(date_exp)
-                else:
-                    return import_time_exp(None)
+                return ''
         else:
             return ''
 
@@ -447,7 +408,6 @@ def add_first_final_callbacks(dash):
                 if date_exists == False:
                     return html.P('Select a customer specific date', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
                 else:
-                    import_time_exp(date)
                     return ''
             else:
                 return ''
@@ -455,9 +415,15 @@ def add_first_final_callbacks(dash):
             return ''
     
 
+
     @dash.callback(
-        Output("output_first_final", "children"),
-        Input("submit-btn","n_clicks"),
+        Output('garbage-div-1', 'children'),
+        Output("data-storage-ffm-display","data"),
+        Output("data-storage-ffm-final","data"),
+        Output("data-storage-ffm-prelim-scope","data"),
+        Output('data-storage-item', 'data'),
+        Input('data-storage-1', 'data'),
+        Input('data-storage-prelim-item', 'data'),
         State("ccode-input", "value"),
         State("empcode-input", "value"),
         State("additional-input", "value"),
@@ -487,10 +453,9 @@ def add_first_final_callbacks(dash):
         State("other-input", "value"),
         State("first-floor-drop", "value"),
         State("freight-elevator-drop", "value"),
-        State("additional-support-checklist", "value"),
-        prevent_intial_call=True
+        State("additional-support-drop", "value")
     )
-    def get_final_small_form(n_clicks, ccode, empcode, additional, address_type, 
+    def store_data(data_storage, prelim_item_storage, ccode, empcode, additional, address_type, 
                             wcode, address, city, state, zip, contact_name, contact_phone, 
                             contact_email, date_exp, date_exp_date, additional_cust_info,
                             quote_or_on_hand, commodity, palletized, packaging, 
@@ -498,122 +463,140 @@ def add_first_final_callbacks(dash):
                             value, scope, other, first_floor, freight_elevator,
                             additional_support):
 
-        prelim_df = send_request_df()
-        valid_to_proceed = check_trans_mode_service(prelim_df)
+        good_modes = ['first_mile','final_mile']
+        good_services = ['store_pickup/delivery','residential_pickup/delivery']
 
-        if valid_to_proceed == True:
-            if n_clicks > 0:
-                if additional_support is not None:
-                    additional_support = additional_support[0]
-                small_form_cols = ['Transportation Mode', 'Service', 'Customer Code', 
-                                    'Seven Letter', 'Additional Groups', 'Address Type', 
-                                    'Warehouse Code', 'Address',  'City', 'State', 'Zip', 
-                                    'Contact Name', 'Contact Phone #', 'Contact Email', 
-                                    'Time Expectation', 'Specific Time Expectation', 
-                                    'Additional Information', 'Quote Only or Freight on Hand', 
-                                    'Commodity', 'Palletized Freight', 'Packaging',
-                                    'Haz Mat', 'UN #', 'Class #', 'Packing Group #', 
-                                    'Additional Insurance', 'Value', 'Scope',
-                                    'First-Floor Pickup', 'Freight Elevator', 
-                                    'Additional Support Needed', 'Items (Quantity, Dimensions)']
+        quote_date = import_quote_date()
 
-                scope_list = parse_scopes(scope, other)
-                import_scopes(scope_list)
+        if data_storage is not None:
+            if pd.read_json(data_storage, orient = 'split')['TRANSPORTATION_MODE'].iloc[0] in good_modes and pd.read_json(data_storage, orient = 'split')['SERVICE'].iloc[0] in good_services:
+                
+                quote_id = create_quote_id(empcode, quote_date)
+                prelim_item_storage['QUOTE_ID'] = quote_id
 
-                item_df = send_item_df()
-                scope_df = explode_scope_data(send_scope_df())
-                request_df = wait_for_codes(send_request_df(), ccode, empcode)
-
-                request_df.WAREHOUSE_CODE = wcode
-
-                invalids = check_for_invalids(item_df)
-
-                trans_mode = request_df['TRANSPORTATION_MODE'][0]
-                service = request_df['SERVICE'][0]
-
-                if invalids == True:
-                    items = None
-                else:
-                    items = 'Full'
-
-                small_form_data = [trans_mode, service, ccode, empcode, additional, address_type, 
-                                    wcode, address, city, state, zip, contact_name, contact_phone, 
-                                    contact_email, date_exp, date_exp_date, additional_cust_info,
-                                    quote_or_on_hand, commodity, palletized, packaging, 
-                                    hazmat, un, haz_class, packing, additional_insurance, 
-                                    value, scope, first_floor, freight_elevator, additional_support,
-                                    items]
+                key_order=['QUOTE_ID', 'QUANTITY', 'WEIGHT', 'LENGTH', 'WIDTH', 'HEIGHT']
+                prelim_item_storage = {k : prelim_item_storage[k] for k in key_order}
 
 
-                small_form_display = pd.DataFrame([small_form_data], columns=small_form_cols)
-
-                missing_list = []
-
-                if small_form_display['Haz Mat'].iloc[0] == None or not small_form_display['Haz Mat'].iloc[0] or small_form_display['Haz Mat'].iloc[0] == False:
-                    small_form_display = small_form_display.drop(columns=['UN #', 'Class #', 'Packing Group #'])
-
-                if small_form_display['Time Expectation'].iloc[0] == 'next_week' or small_form_display['Time Expectation'].iloc[0] == 'next_day' or small_form_display['Time Expectation'].iloc[0] == 'same_day':
-                    small_form_display = small_form_display.drop(columns=['Specific Time Expectation'])
-
-                if small_form_display['Address Type'].iloc[0] == 'warehouse':
-                    small_form_display = small_form_display.drop(columns=['Address', 'Zip'])
-
-                if small_form_display['Address Type'].iloc[0] == 'address':
-                    small_form_display = small_form_display.drop(columns=['Warehouse Code'])
-
-                if small_form_display['Additional Insurance'].iloc[0] == None or not small_form_display['Additional Insurance'].iloc[0] or small_form_display['Additional Insurance'].iloc[0] == False:
-                    small_form_display = small_form_display.drop(columns=['Value'])
-
-                if small_form_display['First-Floor Pickup'].iloc[0] == None or not small_form_display['First-Floor Pickup'].iloc[0] or small_form_display['First-Floor Pickup'].iloc[0] == True:
-                    small_form_display = small_form_display.drop(columns=['Freight Elevator'])
-
-                if small_form_display['Palletized Freight'].iloc[0] == None or small_form_display['Palletized Freight'].iloc[0] == True:
-                    small_form_display = small_form_display.drop(columns=['Packaging'])
-
-                columns_to_drop = ['Additional Groups', 'Contact Name', 'Contact Phone #', 'Contact Email',
-                                'Additional Information', 'Additional Support Needed'] #non-required fields
-
-                for (columnName, columnData) in small_form_display.iteritems():
-                    if columnData.values[0] == None or not columnData.values[0]:
-                        if columnData.values[0] == False:
-                            print('sorry if you see this, its bad coding but I needed a placeholder for this specific instance')
-                        elif columnName in columns_to_drop:
-                            print('sorry if you see this, its bad coding but I needed a placeholder for this specific instance')
-                        else:
-                            missing_list.append(columnName)
-
-                missing_str = ', '.join(str(e) for e in missing_list)
-                missing_str = 'These entries are missing: ' + missing_str + '.'
-
-                import_quote_date()
-                new_quote_id = create_new_quote_id()
-                request_df = request_df.assign(QUOTE_ID=new_quote_id)
-                scope_df = scope_df.assign(QUOTE_ID=new_quote_id)
-                item_df = item_df.assign(QUOTE_ID=new_quote_id)
-
-                item_df_total_weight = item_df[['QUANTITY', 'WEIGHT']]
-                item_df_total_weight['QUANTITY'] = item_df_total_weight['QUANTITY'].astype('float64') 
-                item_df_total_weight['WEIGHT'] = item_df_total_weight['WEIGHT'].astype('float64') 
-                item_df_total_weight['ROW_WEIGHT'] = item_df_total_weight['QUANTITY'] * item_df_total_weight['WEIGHT']
-                total_weight = item_df_total_weight['ROW_WEIGHT'].sum()
-
-                small_form_display['Total Weight'] = total_weight
-
-                if len(missing_list) != 0:
-                    n_clicks = 0
-                    return html.P(missing_str, style={'font-weight':'bold', 'text-align': 'center', 'color': 'red'})
-                else:
-                    dcc.Loading(children = [html.Div(id='prompt')], fullscreen = True)
-                    write_to_lms_quote(request_df)
-                    write_to_lms_quote_scope(scope_df)
-                    write_to_lms_quote_items(item_df)
-                    send_quote_email(small_form_display, item_df, scope_df, city = small_form_display['City'][0], 
-                                    state = small_form_display['State'][0])
-                    return dcc.Location(pathname="/finished", id="finished-page"), ''
+                return [], {'QUOTE_ID': quote_id, 'TRANSPORTATION_MODE': pd.read_json(data_storage, orient = 'split')['TRANSPORTATION_MODE'].iloc[0],  
+                            'SERVICE': pd.read_json(data_storage, orient = 'split')['SERVICE'].iloc[0],  
+                            'CUSTOMER_CODE': ccode,'SEVEN_LETTER': empcode, 'QUOTE_OR_ON_HAND': quote_or_on_hand,
+                            'ADDITIONAL_INSURANCE': additional_insurance, 'VALUE': get_value(additional_insurance, value), 'COMMODITY':commodity, 
+                            'PACKAGING': get_packaging(palletized, packaging), 'IS_HAZ_MAT':hazmat, 'UN_NUMBER':un, 'CLASS_NUMBER':haz_class, 
+                            'PACKING_GROUP_NUMBER':packing, 'ADDITIONAL_SUPPORT_NEEDED':get_additional_support(additional_support), 
+                            'IS_PALLETIZED':palletized, 'FIRST_FLOOR_PICKUP':first_floor,'HAS_FREIGHT_ELEVATOR':freight_elevator,
+                            'CONTACT_NAME':contact_name, 'CONTACT_PHONE':contact_phone, 'CONTACT_EMAIL':contact_email,
+                            'WAREHOUSE_CODE':wcode, 'WAREHOUSE_ADDRESS':address, 'WAREHOUSE_CITY':city, 'WAREHOUSE_STATE':state,
+                            'WAREHOUSE_ZIP':zip, 'TIME_EXPECTATION':get_date_exp(date_exp, date_exp_date), 'QUOTE_DATE':quote_date
+                            }, {'QUOTE_ID':quote_id, 'TRANSPORTATION_MODE': pd.read_json(data_storage, orient = 'split')['TRANSPORTATION_MODE'].iloc[0],  
+                            'SERVICE': pd.read_json(data_storage, orient = 'split')['SERVICE'].iloc[0],  
+                            'CUSTOMER_CODE': ccode,'SEVEN_LETTER': empcode, 'QUOTE_OR_ON_HAND': quote_or_on_hand,
+                            'ADDITIONAL_INSURANCE': additional_insurance, 'VALUE': get_value(additional_insurance, value), 'COMMODITY':commodity, 
+                            'PACKAGING': get_packaging(palletized, packaging), 'IS_HAZ_MAT':hazmat, 'UN_NUMBER':un, 'CLASS_NUMBER':haz_class, 
+                            'PACKING_GROUP_NUMBER':packing, 'ADDITIONAL_SUPPORT_NEEDED':get_additional_support(additional_support), 
+                            'LOAD_NUM':None,  'ORIGIN_CITY':None, 'ORIGIN_STATE':None, 'ORIGIN_ZIP':None, 
+                            'REQUESTED_PICKUP_DATE':None, 'ORIGIN_OPEN_TIME':None,  'ORIGIN_CLOSE_TIME':None, 
+                            'DESTINATION_CITY':None, 'DESTINATION_STATE':None, 'DESTINATION_ZIP':None, 
+                            'REQUESTED_DELIVERY_DATE':None, 'DESTINATION_OPEN_TIME':None, 'DESTINATION_CLOSE_TIME':None, 
+                            'IS_STACKABLE':None, 'CAUSE_LINE_DOWN':None, 'CAN_BREAKDOWN':None, 
+                            'IS_PALLETIZED':palletized, 'FIRST_FLOOR_PICKUP':first_floor,'HAS_FREIGHT_ELEVATOR':freight_elevator,
+                            'CONTACT_NAME':contact_name, 'CONTACT_PHONE':contact_phone, 'CONTACT_EMAIL':contact_email,
+                            'WAREHOUSE_CODE':wcode, 'WAREHOUSE_ADDRESS':address, 'WAREHOUSE_CITY':city, 'WAREHOUSE_STATE':state,
+                            'WAREHOUSE_ZIP':zip, 'TIME_EXPECTATION':get_date_exp(date_exp, date_exp_date), 'QUOTE_DATE':quote_date
+                            }, {'QUOTE_ID': quote_id, 'STOP_TYPE': 'first_final', 'SCOPE': parse_scopes(scope, other)}, prelim_item_storage
             else:
-                return '', ''
+                dcc.Location(pathname="/", id="first-final-redirect"),None, None, None, None
         else:
-            return dcc.Location(pathname="/", id="first-final-redirect"), ''
+            return dcc.Location(pathname="/", id="first-final-redirect"),None, None, None, None
 
 
 
+    @dash.callback(
+        Output("data-storage-final", "data"),
+        Output("data-storage-scope-final", "data"),
+        Output("data-storage-item-final", "data"),
+        Output("output_first_final", "children"),
+        Input("submit-btn","n_clicks"),
+        Input('data-storage-ffm-display', 'data'),
+        Input('data-storage-ffm-final', 'data'),
+        Input("data-storage-ffm-prelim-scope","data"),
+        Input('data-storage-item', 'data'),
+        State("warehouse-address-input", "value"),
+        State("additional-input", "value"),
+        State("customer-addtional-input", "value"),
+    )
+    def send_data(n_clicks, final_data_storage_display, final_data, scope_storage, item_storage, address_type, additional_contacts, additional_cust_info):
+        if n_clicks > 0:
+
+            print('----------data----------')
+            print(final_data_storage_display)
+            print(final_data)
+            print(n_clicks)
+            print('after data n clicks:', n_clicks)
+            print('------------------------')
+
+            columns_to_drop = ['CONTACT_NAME', 'CONTACT_PHONE', 'CONTACT_EMAIL'] #non-required fields
+            missing_list = []
+
+            if get_ccode(final_data_storage_display['CUSTOMER_CODE']) == None:
+                missing_list.append(prettify_strings('CUSTOMER_CODE'))
+
+            if get_empcode(final_data_storage_display['SEVEN_LETTER']) == None:
+                missing_list.append(prettify_strings('SEVEN_LETTER'))
+
+
+            if address_type == None or address_type == '':
+                missing_list.append('Address Type')
+                columns_to_drop.append('WAREHOUSE_ADDRESS')
+                columns_to_drop.append('WAREHOUSE_ZIP')
+                columns_to_drop.append('WAREHOUSE_CODE')
+                columns_to_drop.append('WAREHOUSE_CITY')
+                columns_to_drop.append('WAREHOUSE_STATE')
+
+            if final_data_storage_display['IS_HAZ_MAT'] == None or final_data_storage_display['IS_HAZ_MAT'] == '' or final_data_storage_display['IS_HAZ_MAT'] == False:
+                columns_to_drop.append('UN_NUMBER')
+                columns_to_drop.append('CLASS_NUMBER')
+                columns_to_drop.append('PACKING_GROUP_NUMBER')
+
+            if address_type == 'warehouse':
+                columns_to_drop.append('WAREHOUSE_ADDRESS')
+                columns_to_drop.append('WAREHOUSE_ZIP')
+                
+                if get_wcode(final_data_storage_display['WAREHOUSE_CODE']) == None:
+                    missing_list.append(prettify_strings('WAREHOUSE_CODE'))
+
+            if address_type == 'address':
+                columns_to_drop.append('WAREHOUSE_CODE')
+            
+            if final_data_storage_display['ADDITIONAL_INSURANCE'] == None or not final_data_storage_display['ADDITIONAL_INSURANCE'] or final_data_storage_display['ADDITIONAL_INSURANCE']== False:
+                columns_to_drop.append('VALUE')
+
+            if final_data_storage_display['FIRST_FLOOR_PICKUP'] == None or final_data_storage_display['FIRST_FLOOR_PICKUP'] or final_data_storage_display['FIRST_FLOOR_PICKUP'] == True:
+                columns_to_drop.append('HAS_FREIGHT_ELEVATOR')
+
+            for key, value in final_data_storage_display.items():
+                if value is None and key not in columns_to_drop:
+                    missing_list.append(prettify_strings(key))
+
+            if check_for_invalids(item_storage) ==  True:
+                missing_list.append('Items (Quantity, Dimensions)')
+
+            if scope_storage['SCOPE'] == None or not scope_storage['SCOPE']:
+                missing_list.append('Scope')
+
+            #remove dups
+            missing_list = list(set(missing_list))
+
+            missing_str = ', '.join(str(e) for e in missing_list)
+            missing_str = 'These entries are missing: ' + missing_str + '.'
+
+            time.sleep(3)
+
+            if len(missing_list) != 0:
+                    return final_data, scope_storage, item_storage, html.P(missing_str, style={'font-weight':'bold', 'text-align': 'center', 'color': 'red'})
+            else:
+                send_quote_email(final_data_storage_display, item_storage, scope_storage, additional_contacts, additional_cust_info)
+                return final_data, scope_storage, item_storage, dcc.Location(pathname="/finished", id="finished-page")
+        
+        else:
+            return None, None, None, []

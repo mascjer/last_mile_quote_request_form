@@ -5,6 +5,7 @@ import pytz
 import pandas as pd
 import numpy as np
 import time
+import string
 from pages.dataframe_builder import *
 from database_functions import *
 
@@ -92,10 +93,15 @@ def check_zip_code(S):
             return False
         else:
             spaceless = S.replace(' ','')
-            if not re.match('^(\d{5})([- ])?(\d{4})?$', spaceless):
-                return False
-            else:
+            print(spaceless)
+            if re.match('^(\d{5})([- ])?(\d{4})?$', spaceless): #american zip code 
+                print('american')
                 return True
+            elif re.match('[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ]?[0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]', spaceless): #canadian
+                print('canadian')
+                return True
+            else:
+                return False
 
 
 ### USED SHARED_CALLBACKS ###
@@ -120,8 +126,10 @@ def check_email_string(S):
 
 
 ### USED AIR_EUV_CALLBACKS, FIRST_FINAL_CALLBACKS ###
-def check_for_invalids(item_df):
-    item_list = item_df.values.tolist()
+def check_for_invalids(items):
+    items = pd.DataFrame.from_dict(items)
+
+    item_list = items.values.tolist()
     true_list = []
     for i in range(len(item_list)):
         t_f = '***Invalid***' in item_list[i]
@@ -132,6 +140,12 @@ def check_for_invalids(item_df):
         return True
     else:
         return False
+
+
+def check_for_nones(scopes):
+    return None not in scopes.values()
+
+   
 
 
 ### USED AIR_EUV_CALLBACKS, FIRST_FINAL_CALLBACKS ###
@@ -146,19 +160,27 @@ def wait_for_codes(request_df, ccode, empcode):
     if empcode is not None:
         empcode = empcode.upper()
 
-    ccode_set = request_df.CUSTOMER_CODE[0] == ccode
-    empcode_set = request_df.SEVEN_LETTER[0] == empcode
+    ccode_valid = check_c_codes(ccode)
+    empcode_valid = check_c_codes(ccode)
 
+    if ccode_valid == True and empcode_valid == True:
+        
+        ccode_set = request_df.CUSTOMER_CODE[0] == ccode
+        empcode_set = request_df.SEVEN_LETTER[0] == empcode
 
-    if ccode_set == True:
-        if empcode_set == True:
-            return request_df
+        if ccode_set == True:
+            if empcode_set == True:
+                return request_df
+            else:
+                time.sleep(0.1)
+                return wait_for_codes(send_request_df(), ccode, empcode)
         else:
             time.sleep(0.1)
             return wait_for_codes(send_request_df(), ccode, empcode)
     else:
-        time.sleep(0.1)
-        return wait_for_codes(send_request_df(), ccode, empcode)
+        request_df.CUSTOMER_CODE[0] == None
+        request_df.SEVEN_LETTER[0] == None
+        return request_df
 
 
 ### USED AIR_EUV_CALLBACKS ###
@@ -260,3 +282,99 @@ def check_trans_mode_service(request_df):
                 return False
     else:
         return False
+
+
+def get_packaging(palletized, packaging):
+        if palletized == True:
+            return 'pallet'
+        else:
+            return packaging
+
+
+def get_date_exp(date_exp, date_exp_date):
+        if date_exp == 'customer_specific_date':
+            return date_exp_date
+        else:
+            return date_exp
+
+
+def get_value(additional_insurance, value):
+    if additional_insurance == True:
+        value_exists = valid_input(value)
+        if value_exists == True:
+            value = value.replace('$','')
+            value = value.replace(',','')
+
+            try:
+                value = float(value)
+                return value
+            except:
+                return None
+    else:
+        return None
+
+
+def get_additional_support(additional_support):
+    print('ADDITIONAL SUPPORT: ', additional_support)
+    if additional_support is not None:
+        return additional_support
+    else:
+        return False
+
+
+def get_ccode(ccode):
+    if ccode is not None:
+        ccode = ccode.upper()
+        valid_ccode = check_c_codes(ccode)
+        if valid_ccode == True:
+            return ccode
+        else:
+            return None
+    else:
+        return None
+
+
+def get_empcode(empcode):
+    if empcode is not None:
+        empcode = empcode.upper()
+        valid_empcode = check_emp_codes(empcode)
+        if valid_empcode == True:
+            return empcode
+        else:
+            return None
+    else:
+        return None
+
+
+def get_wcode(wcode):
+    if wcode is not None:
+        wcode = wcode.upper()
+        valid_wcode = check_w_codes(wcode)
+        if valid_wcode == True:
+            return wcode
+        else:
+            return None
+    else:
+        return None
+
+
+def prettify_strings(value):
+    if isinstance(value, str):
+        value = value.replace('_', ' ')
+        value = string.capwords(value)
+        return value
+    else:
+        return value
+    
+
+def create_quote_id(empcode,quote_date):
+    quote_date = quote_date[2:-2]
+    quote_id = empcode[:3] + quote_date
+    quote_id = quote_id.replace('-', '')
+    quote_id = quote_id.replace(':', '')
+    quote_id = quote_id.replace(' ', '')
+
+    quote_id = quote_id.upper()
+
+
+    return quote_id

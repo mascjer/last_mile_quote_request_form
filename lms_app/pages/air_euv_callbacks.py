@@ -53,10 +53,8 @@ def add_air_euv_callbacks(dash):
         if n_clicks > 0:
             load_num_exists = valid_input(load_num)
             if load_num_exists == False:
-                import_load_num(None)
                 return '' #html.P('Submit a load number', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             else:
-                import_load_num(load_num)
                 return ''
         else:
             return ''
@@ -93,21 +91,12 @@ def add_air_euv_callbacks(dash):
 
             if city_exists == False:
                 false_list.append('City')
-                import_origin_city(None)
-            else:
-                import_origin_city(o_city)
 
             if state_exists == False:
                 false_list.append('State')
-                import_origin_state(None)
-            else:
-                import_origin_state(o_state)
 
             if zip_valid == False:
-                false_list.append('Zip Code (XXXXX or XXXXX-XXXX)')
-                import_origin_zip(None)
-            else:
-                import_origin_zip(o_zip)
+                false_list.append('Zip Code (#####, #####-##### or A#A#A# for CAN)')
 
             str = 'Submit a valid: '
             combined_str = ', '.join(false_list)
@@ -131,13 +120,10 @@ def add_air_euv_callbacks(dash):
         if n_clicks > 0:
             output_str = 'Requested pickup date cannot be empty'
             if date is None:
-                import_req_pick_date(None)
                 return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             elif date == '':
-                import_req_pick_date(None)
                 return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             else:
-                import_req_pick_date(date)
                 return ''
         else:
             return ''
@@ -215,12 +201,8 @@ def add_air_euv_callbacks(dash):
         output_str = 'Close time must be later than open time'
         if n_clicks > 0:
             if date is None:
-                import_origin_open_time(None)
-                import_origin_close_time(None)
                 return ''
             elif date == '':
-                import_origin_open_time(None)
-                import_origin_close_time(None)
                 return ''
             else:
                 open_time_exists = valid_input(open_time)
@@ -231,8 +213,6 @@ def add_air_euv_callbacks(dash):
                 close_tz_exists = valid_input(close_tz)
 
                 if open_time_exists == False or open_am_pm_exists == False or open_tz_exists == False or close_time_exists == False or close_am_pm_exists == False or close_tz_exists == False:
-                    import_origin_open_time(None)
-                    import_origin_close_time(None)
                     return ''
                 else:
                     utc_open_str_obj = create_date_strings(date, open_time, open_am_pm, open_tz)
@@ -241,12 +221,8 @@ def add_air_euv_callbacks(dash):
                     diff = utc_close_str_obj - utc_open_str_obj
 
                     if diff.total_seconds() < 1:
-                        import_origin_open_time(None)
-                        import_origin_close_time(None)
                         return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
                     else:
-                        import_origin_open_time(utc_open_str_obj)
-                        import_origin_close_time(utc_close_str_obj)
                         return ''
         else:
             return ''
@@ -270,21 +246,12 @@ def add_air_euv_callbacks(dash):
 
             if city_exists == False:
                 false_list.append('City')
-                import_dest_city(None)
-            else:
-                import_dest_city(d_city)
 
             if state_exists == False:
                 false_list.append('State')
-                import_dest_state(None)
-            else:
-                import_dest_state(d_state)
 
             if zip_valid == False:
-                false_list.append('Zip Code (XXXXX or XXXXX-XXXX)')
-                import_dest_zip(None)
-            else:
-                import_dest_zip(d_zip)
+                false_list.append('Zip Code (#####, #####-##### or A#A#A# for CAN)')
 
             str = 'Submit a valid: '
             combined_str = ', '.join(false_list)
@@ -308,13 +275,10 @@ def add_air_euv_callbacks(dash):
         if n_clicks > 0:
             output_str = 'Requested pickup date cannot be empty'
             if date is None:
-                import_req_del_date(None)
                 return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             elif date == '':
-                import_req_del_date(None)
                 return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             else:
-                import_req_del_date(date)
                 return ''
         else:
             return ''
@@ -392,12 +356,8 @@ def add_air_euv_callbacks(dash):
         output_str = 'Close time must be later than open time'
         if n_clicks > 0:
             if date is None:
-                import_dest_open_time(None)
-                import_dest_close_time(None)
                 return ''
             elif date == '':
-                import_dest_open_time(None)
-                import_dest_close_time(None)
                 return ''
             else:
                 open_time_exists = valid_input(open_time)
@@ -408,8 +368,6 @@ def add_air_euv_callbacks(dash):
                 close_tz_exists = valid_input(close_tz)
 
                 if open_time_exists == False or open_am_pm_exists == False or open_tz_exists == False or close_time_exists == False or close_am_pm_exists == False or close_tz_exists == False:
-                    import_dest_open_time(None)
-                    import_dest_close_time(None)
                     return ''
                 else:
                     utc_open_str_obj = create_date_strings(date, open_time, open_am_pm, open_tz)
@@ -418,12 +376,8 @@ def add_air_euv_callbacks(dash):
                     diff = utc_close_str_obj - utc_open_str_obj
 
                     if diff.total_seconds() < 1:
-                        import_dest_open_time(None)
-                        import_dest_close_time(None)
                         return html.P(output_str, style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
                     else:
-                        import_dest_open_time(utc_open_str_obj)
-                        import_dest_close_time(utc_close_str_obj)
                         return ''
         else:
             return ''
@@ -438,10 +392,8 @@ def add_air_euv_callbacks(dash):
         if n_clicks > 0:
             stackable_exists = valid_input(stackable)
             if stackable_exists == False:
-                import_stackable_freight(None)
                 return html.P('Select yes or no', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             else:
-                import_stackable_freight(stackable)
                 return ''
         else:
             return ''
@@ -456,10 +408,8 @@ def add_air_euv_callbacks(dash):
         if n_clicks > 0:
             situation_exists = valid_input(situation)
             if situation_exists == False:
-                import_cause_line_down(None)
                 return html.P('Select yes or no', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             else:
-                import_cause_line_down(situation)
                 return ''
         else:
             return ''
@@ -474,10 +424,8 @@ def add_air_euv_callbacks(dash):
         if n_clicks > 0:
             breakdown_exists = valid_input(breakdown)
             if breakdown_exists == False:
-                import_can_breakdown(None)
                 return html.P('Select yes or no', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
             else:
-                import_can_breakdown(breakdown)
                 return ''
         else:
             return ''
@@ -493,10 +441,8 @@ def add_air_euv_callbacks(dash):
     def check_q19_pick_scope(n_clicks, pick_scope):
         if n_clicks > 0:
             if not pick_scope:
-                import_pick_stop_type(None)
                 return ''
             else:
-                import_pick_stop_type('P')
                 return ''
         else:
             return ''
@@ -520,10 +466,8 @@ def add_air_euv_callbacks(dash):
                     if disabled == False:
                         other_exists = valid_input(other)
                         if other_exists == False:
-                            import_other_pick_scope(None)
                             return html.P('Submit a valid other scope', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
                         else:
-                            import_other_pick_scope(other_exists)
                             return ''
                     else:
                         return ''
@@ -546,15 +490,12 @@ def add_air_euv_callbacks(dash):
     def check_q20_drop_scope(n_clicks, drop_scope):
         if n_clicks > 0:
             if not drop_scope:
-                import_drop_stop_type(None)
                 return ''
             else:
-                import_drop_stop_type('D')
                 return ''
         else:
             return ''
     
-
 
     #needed just in case other scope is selected but nothing is entered
     @dash.callback(
@@ -573,10 +514,8 @@ def add_air_euv_callbacks(dash):
                     if disabled == False:
                         other_exists = valid_input(other)
                         if other_exists == False:
-                            import_other_drop_scope(None)
                             return html.P('Submit a valid other scope', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
                         else:
-                            import_other_drop_scope(other_exists)
                             return ''
                     else:
                         return ''
@@ -590,8 +529,14 @@ def add_air_euv_callbacks(dash):
     
 
     @dash.callback(
-        Output("output_air_euv", "children"),
-        Input("submit-btn","n_clicks"),
+        Output('garbage-div-2', 'children'),
+        Output("data-storage-ae-display","data"),
+        Output("data-storage-ae-final","data"),
+        Output("data-storage-ae-prelim-pick-scope","data"),
+        Output("data-storage-ae-prelim-drop-scope","data"),
+        Output('data-storage-ae-item', 'data'),
+        Input('data-storage', 'data'),
+        Input('data-storage-prelim-item', 'data'),
         State("ccode-input", "value"),
         State("empcode-input", "value"),
         State("additional-input", "value"),
@@ -635,149 +580,174 @@ def add_air_euv_callbacks(dash):
         State("pick-other-input", "value"),
         State("drop-scope-check", "value"),
         State("drop-other-input", "value"),
-        State("additional-support-checklist", "value"),
-        prevent_intial_call=True
+        State("additional-support-drop", "value")
     )
-    def get_final_large_form(n_clicks, ccode, empcode, additional, load_num, quote_or_on_hand, 
-            org_city, org_state, org_zip,
+    def store_data(data_storage, prelim_item_storage, ccode, 
+            empcode, additional, load_num, quote_or_on_hand, org_city, org_state, org_zip,
             req_pick, pick_additional_info, pick_open_time, pick_open_am_pm, pick_open_timezone, pick_close_time, pick_close_am_pm, 
             pick_close_timezone, dest_city, dest_state, dest_zip, req_drop, drop_addtional_info, open_drop_time, open_drop_am_pm, 
             open_drop_timezone,close_drop_time, close_drop_am_pm, close_drop_timezone, palletized, packaging,
             stackable, additional_insurance, value, commodity, hazmat, un, haz_class, packing, situation, breakdown, pick_scope,
             pick_other, drop_scope, drop_other, additional_support):
+        good_modes = ['air_expedite','exclusive_use_vehicle']
 
-        prelim_df = send_request_df()
-        valid_to_proceed = check_trans_mode_service(prelim_df)
-        
+        quote_date = import_quote_date()
 
-        if valid_to_proceed == True:
-            if n_clicks > 0:    
-                if additional_support is not None:
-                    additional_support = additional_support[0]
-                    
-                large_form_cols = ['Transportation Mode', 'Customer Code', 'Seven Letter', 'Additional Groups', 'Load Number',
-                    'Quote Only or Freight on Hand', 'Origin City', 'Origin State', 
-                    'Origin Zip Code', 'Requested Pickup Date', 'Pickup Addtional Info', 'Origin Open Time', 'Origin Open AM/PM', 'Origin Open Timezone', 
-                    'Origin Close Time', 'Origin Close AM/PM', 'Origin Close Timezone', 'Destination City', 'Destination State',
-                    'Destination Zip Code', 'Requested Delivery Day', 'Delivery Addtional Info', 'Receiver Open Time', 'Receiver Open AM/PM', 
-                    'Receiver Open Timezone','Receiver Close Time', 'Receiver Close AM/PM', 'Receiver Close Timezone', 
-                    'Palletized Freight', 'Packaging', 'Freight Stackable', 'Additional Insurance', 'Value', 'Commodity', 'Haz Mat', 'UN #', 'Class #', 'Packing Group #', 
-                    'Line-Down Situation', 'Freight Breakdown', 'Pickup Scope', 'Other Pickup Scope', 'Delivery Scope', 'Other Delivery Scope', 
-                    'Additional Support Needed', 'Items (Quantity, Dimensions)']
-
-                pick_scope_list = parse_scopes(pick_scope, pick_other)
-                drop_scope_list = parse_scopes(drop_scope, drop_other)
-
-                import_pick_scopes(pick_scope_list)
-                import_drop_scopes(drop_scope_list)
-
-                pick_scope_df = get_pick_scope_data()
-                drop_scope_df = get_drop_scope_data()
-
-                scope_df = concat_scope_dfs(pick_scope_df, drop_scope_df)
-                item_df = send_item_df()
-
-                request_df = wait_for_codes(send_request_df(), ccode, empcode)
-
-                invalids = check_for_invalids(item_df)
-
-                origin_open_time = request_df['ORIGIN_OPEN_TIME'][0]
-                origin_close_time = request_df['ORIGIN_CLOSE_TIME'][0]
-                dest_open_time = request_df['DESTINATION_OPEN_TIME'][0]
-                dest_close_time = request_df['DESTINATION_CLOSE_TIME'][0]
-
-                if invalids == True:
-                    items = None
-                else:
-                    items = 'Full'
-
-                trans_mode = request_df['TRANSPORTATION_MODE'][0]
-
-                large_form_data = [trans_mode, ccode, empcode, additional, load_num, quote_or_on_hand, 
-                                    org_city, org_state, org_zip,
-                                    req_pick, pick_additional_info, pick_open_time, pick_open_am_pm, pick_open_timezone, pick_close_time, pick_close_am_pm, 
-                                    pick_close_timezone, dest_city, dest_state, dest_zip, req_drop, drop_addtional_info, open_drop_time, open_drop_am_pm, 
-                                    open_drop_timezone,close_drop_time, close_drop_am_pm, close_drop_timezone, palletized, packaging,
-                                    stackable, additional_insurance, value, commodity, hazmat, un, haz_class, packing, situation, breakdown, 
-                                    pick_scope, pick_other, drop_scope, drop_other, additional_support, items]
-
-                large_form_display = pd.DataFrame([large_form_data], columns=large_form_cols)
-
-                missing_list = []
-
-                if large_form_display['Haz Mat'].iloc[0] == None or not large_form_display['Haz Mat'].iloc[0] or large_form_display['Haz Mat'].iloc[0] == False:
-                    large_form_display = large_form_display.drop(columns=['UN #', 'Class #', 'Packing Group #'])
-
-                if large_form_display['Additional Insurance'].iloc[0] == None or not large_form_display['Additional Insurance'].iloc[0] or large_form_display['Additional Insurance'].iloc[0] == False:
-                    large_form_display = large_form_display.drop(columns=['Value'])
-
-                if large_form_display['Palletized Freight'].iloc[0] == None or large_form_display['Palletized Freight'].iloc[0] == True:
-                    large_form_display = large_form_display.drop(columns=['Packaging'])
-
-                if large_form_display['Pickup Scope'].iloc[0] == None or not large_form_display['Pickup Scope'].iloc[0] or 'Other' not in large_form_display['Pickup Scope'].iloc[0]:
-                    large_form_display = large_form_display.drop(columns=['Other Pickup Scope'])
-
-                if large_form_display['Delivery Scope'].iloc[0] == None or not large_form_display['Delivery Scope'].iloc[0] or 'Other' not in large_form_display['Delivery Scope'].iloc[0]:
-                    large_form_display = large_form_display.drop(columns=['Other Delivery Scope'])
-
-                columns_to_drop = ['Additional Groups', 'Additional Support Needed',
-                                    'Pickup Addtional Info', 'Delivery Addtional Info', 'Pickup Scope', 'Delivery Scope', 'Load Number'] #non-required fields
-
-                for (columnName, columnData) in large_form_display.iteritems():
-                    if columnData.values[0] == None or not columnData.values[0]:
-                        if columnData.values[0] == False:
-                            print('sorry if you see this, its bad coding but I needed a placeholder for this specific instance')
-                        elif columnName in columns_to_drop:
-                            print('sorry if you see this, its bad coding but I needed a placeholder for this specific instance')
-                        else:
-                            missing_list.append(columnName)
-                    
-
-
-                if origin_open_time is None:
-                    missing_list.append('Origin Open Time (INVALID)')
-                if origin_close_time is None:
-                    missing_list.append('Origin Close Time (INVALID)')
-                if dest_open_time is None:
-                    missing_list.append('Receiver Open Time (INVALID)')
-                if dest_close_time is None:
-                    missing_list.append('Receiver Close Time (INVALID)')
-
+        if data_storage is not None:
+            if pd.read_json(data_storage, orient = 'split')['TRANSPORTATION_MODE'].iloc[0] in good_modes:
                 
-                missing_str = ', '.join(str(e) for e in missing_list)
-                missing_str = 'These entries are missing: ' + missing_str + '.'
-                    
+                quote_id = create_quote_id(empcode, quote_date)
+                prelim_item_storage['QUOTE_ID'] = quote_id
 
-                import_quote_date()
-                new_quote_id = create_new_quote_id()
-                request_df = request_df.assign(QUOTE_ID=new_quote_id)
-                scope_df = scope_df.assign(QUOTE_ID=new_quote_id)
-                item_df = item_df.assign(QUOTE_ID=new_quote_id)
+                key_order=['QUOTE_ID', 'QUANTITY', 'WEIGHT', 'LENGTH', 'WIDTH', 'HEIGHT']
+                prelim_item_storage = {k : prelim_item_storage[k] for k in key_order}
 
-                item_df_total_weight = item_df[['QUANTITY', 'WEIGHT']]
-                item_df_total_weight['QUANTITY'] = item_df_total_weight['QUANTITY'].astype('float64') 
-                item_df_total_weight['WEIGHT'] = item_df_total_weight['WEIGHT'].astype('float64') 
-                item_df_total_weight['ROW_WEIGHT'] = item_df_total_weight['QUANTITY'] * item_df_total_weight['WEIGHT']
-                total_weight = item_df_total_weight['ROW_WEIGHT'].sum()
-
-                large_form_display['Total Weight'] = total_weight
-
-                if len(missing_list) != 0:
-                    return html.P(missing_str, style={'font-weight':'bold', 'text-align': 'center', 'color': 'red'})
-                else:                
-                    write_to_lms_quote(request_df)
-                    write_to_lms_quote_scope(scope_df)
-                    write_to_lms_quote_items(item_df)
-                    send_quote_email(large_form_display, item_df, scope_df, city = large_form_display['Origin City'][0], state = large_form_display['Origin State'][0])
-                    return dcc.Location(pathname="/finished", id="finished-page")
+                return [],{'QUOTE_ID':quote_id, 'TRANSPORTATION_MODE': pd.read_json(data_storage, orient = 'split')['TRANSPORTATION_MODE'].iloc[0],  
+                            'CUSTOMER_CODE': ccode,'SEVEN_LETTER': empcode, 'QUOTE_OR_ON_HAND': quote_or_on_hand,
+                            'ADDITIONAL_INSURANCE': additional_insurance, 'VALUE': get_value(additional_insurance, value), 'COMMODITY':commodity, 
+                            'PACKAGING': get_packaging(palletized, packaging), 'IS_HAZ_MAT':hazmat, 'UN_NUMBER':un, 'CLASS_NUMBER':haz_class, 
+                            'PACKING_GROUP_NUMBER':packing, 'ADDITIONAL_SUPPORT_NEEDED':get_additional_support(additional_support), 
+                            'LOAD_NUM':load_num,  'ORIGIN_CITY':org_city, 'ORIGIN_STATE':org_state, 'ORIGIN_ZIP':org_zip, 
+                            'REQUESTED_PICKUP_DATE': req_pick, 
+                            'ORIGIN_OPEN_TIME': get_open_time(req_pick, pick_open_time, pick_open_am_pm, pick_open_timezone),  
+                            'ORIGIN_CLOSE_TIME': get_close_time(req_pick, pick_open_time, pick_open_am_pm, pick_open_timezone, 
+                                                                    pick_close_time, pick_close_am_pm, pick_close_timezone), 
+                            'DESTINATION_CITY':dest_city, 'DESTINATION_STATE':dest_state, 'DESTINATION_ZIP':dest_zip, 
+                            'REQUESTED_DELIVERY_DATE':req_drop, 
+                            'DESTINATION_OPEN_TIME': get_open_time(req_drop, open_drop_time, open_drop_am_pm, open_drop_timezone),  
+                            'DESTINATION_CLOSE_TIME': get_close_time(req_drop, open_drop_time, open_drop_am_pm, open_drop_timezone, 
+                                                                        close_drop_time, close_drop_am_pm, close_drop_timezone),  
+                            'IS_STACKABLE':stackable, 'CAUSE_LINE_DOWN':situation, 'CAN_BREAKDOWN':breakdown, 'IS_PALLETIZED':palletized, 
+                            'QUOTE_DATE': quote_date
+                            }, {'QUOTE_ID':quote_id, 'TRANSPORTATION_MODE': pd.read_json(data_storage, orient = 'split')['TRANSPORTATION_MODE'].iloc[0],  
+                            'SERVICE': None, 'CUSTOMER_CODE': ccode,'SEVEN_LETTER': empcode, 'QUOTE_OR_ON_HAND': quote_or_on_hand,
+                            'ADDITIONAL_INSURANCE': additional_insurance, 'VALUE': get_value(additional_insurance, value), 'COMMODITY':commodity, 
+                            'PACKAGING': get_packaging(palletized, packaging), 'IS_HAZ_MAT':hazmat, 'UN_NUMBER':un, 'CLASS_NUMBER':haz_class, 
+                            'PACKING_GROUP_NUMBER':packing, 'ADDITIONAL_SUPPORT_NEEDED':get_additional_support(additional_support), 
+                            'LOAD_NUM':load_num,  'ORIGIN_CITY':org_city, 'ORIGIN_STATE':org_state, 'ORIGIN_ZIP':org_zip, 
+                            'REQUESTED_PICKUP_DATE': req_pick, 
+                            'ORIGIN_OPEN_TIME': get_open_time(req_pick, pick_open_time, pick_open_am_pm, pick_open_timezone),
+                            'ORIGIN_CLOSE_TIME': get_close_time(req_pick, pick_open_time, pick_open_am_pm, pick_open_timezone, 
+                                                                    pick_close_time, pick_close_am_pm, pick_close_timezone),  
+                            'DESTINATION_CITY':dest_city, 'DESTINATION_STATE':dest_state, 'DESTINATION_ZIP':dest_zip, 
+                            'REQUESTED_DELIVERY_DATE':req_drop, 
+                            'DESTINATION_OPEN_TIME': get_open_time(req_drop, open_drop_time, open_drop_am_pm, open_drop_timezone),  
+                            'DESTINATION_CLOSE_TIME': get_close_time(req_drop, open_drop_time, open_drop_am_pm, open_drop_timezone, 
+                                                                        close_drop_time, close_drop_am_pm, close_drop_timezone),  
+                            'IS_STACKABLE':stackable, 'CAUSE_LINE_DOWN':situation, 'CAN_BREAKDOWN':breakdown, 'IS_PALLETIZED':palletized, 
+                            'QUOTE_DATE': quote_date
+                            }, {'QUOTE_ID': quote_id, 'STOP_TYPE': 'P', 
+                                'SCOPE': parse_scopes(pick_scope, pick_other)}, {'QUOTE_ID': quote_id, 
+                                                                                 'STOP_TYPE': 'D', 'SCOPE': parse_scopes(drop_scope, drop_other)}, prelim_item_storage
             else:
-                return ['']
+                return dcc.Location(pathname="/", id="air-euv-redirect"),None, None, None, None, None
+
         else:
-            return dcc.Location(pathname="/", id="air-euv-redirect")
+            return dcc.Location(pathname="/", id="air-euv-redirect"),None, None, None, None, None
 
 
+    @dash.callback(
+        Output("data-storage-final-session", "data"),
+        Output("data-storage-pick-scope-final", "data"),
+        Output("data-storage-drop-scope-final", "data"),
+        Output("data-storage-ae-item-final", "data"),
+        Output("output_air_euv", "children"),
+        Input("submit-btn","n_clicks"),
+        Input('data-storage-ae-display', 'data'),
+        Input('data-storage-ae-final', 'data'),
+        Input("data-storage-ae-prelim-pick-scope","data"),
+        Input("data-storage-ae-prelim-drop-scope","data"),
+        Input('data-storage-ae-item', 'data'),
+        State("additional-input", "value"),
+        State("pickup-addtional-input", "value"),
+        State("delivery-addtional-input", "value"),
+    )
+    def send_data(n_clicks, final_data_storage_display, final_data, pick_scope_storage, drop_scope_storage, item_storage, 
+                  additional_contacts, pickup_additional_input, drop_additional_input):
+        if n_clicks > 0:
+            print('----------data----------')
+            print(final_data_storage_display)
+            print(n_clicks)
+            print('after data n clicks:', n_clicks)
+            print('------------------------')
+
+            columns_to_drop = ['LOAD_NUM']
+            missing_list = []
+
+            if get_ccode(final_data_storage_display['CUSTOMER_CODE']) == None:
+                missing_list.append(prettify_strings('CUSTOMER_CODE'))
+
+            if get_empcode(final_data_storage_display['SEVEN_LETTER']) == None:
+                missing_list.append(prettify_strings('SEVEN_LETTER'))
+
+            if final_data_storage_display['IS_HAZ_MAT'] == None or final_data_storage_display['IS_HAZ_MAT'] == '' or final_data_storage_display['IS_HAZ_MAT'] == False:
+                columns_to_drop.append('UN_NUMBER')
+                columns_to_drop.append('CLASS_NUMBER')
+                columns_to_drop.append('PACKING_GROUP_NUMBER')
+            
+            if final_data_storage_display['ADDITIONAL_INSURANCE'] == None or not final_data_storage_display['ADDITIONAL_INSURANCE'] or final_data_storage_display['ADDITIONAL_INSURANCE']== False:
+                columns_to_drop.append('VALUE')
+
+            for key, value in final_data_storage_display.items():
+                if value is None and key not in columns_to_drop:
+                    missing_list.append(prettify_strings(key))
+
+            if check_for_invalids(item_storage) ==  True:
+                missing_list.append('Items (Quantity, Dimensions)')
+
+            #remove dups
+            missing_list = list(set(missing_list))
+
+            missing_str = ', '.join(str(e) for e in missing_list)
+            missing_str = 'These entries are missing: ' + missing_str + '.'
+
+            time.sleep(3)
+
+            if len(missing_list) != 0:
+                return final_data, pick_scope_storage, drop_scope_storage, item_storage, html.P(missing_str, style={'font-weight':'bold', 'text-align': 'center', 'color': 'red'})
+            else:
+                send_air_euv_email(final_data, item_storage, pick_scope_storage, drop_scope_storage, additional_contacts, pickup_additional_input, drop_additional_input)
+                return final_data, pick_scope_storage, drop_scope_storage, item_storage, dcc.Location(pathname="/air_exp_finished", id="finished-page")
+        
+        else:
+            return None, None, None, None, []
+
+    
+    def get_open_time(req_date, req_time, am_pm, timezone):
+        date_valid = valid_input(req_date)
+        time_valid = valid_input(req_time)
+        am_pm_valid = valid_input(am_pm)
+        timezone_valid = valid_input(timezone)
+
+        if date_valid == True and time_valid == True and am_pm_valid == True and timezone_valid == True:
+            utc_time_string = create_date_strings(req_date, req_time, am_pm, timezone)
+            return utc_time_string
+        else:
+            return None
 
 
+    def get_close_time(req_date, open_time, open_am_pm, open_timezone, close_time, close_am_pm, close_timezone):
+        date_valid = valid_input(req_date)
+        open_time_valid = valid_input(open_time)
+        open_am_pm_valid = valid_input(open_am_pm)
+        open_timezone_valid = valid_input(open_timezone)
+        close_time_valid = valid_input(close_time)
+        close_am_pm_valid = valid_input(close_am_pm)
+        close_timezone_valid = valid_input(close_timezone)
 
+        if (date_valid == True and open_time_valid == True and open_am_pm_valid == True 
+            and open_timezone_valid == True and close_time_valid == True and close_am_pm_valid == True 
+            and close_timezone_valid == True):
 
+            utc_open_str_obj = create_date_strings(req_date, open_time, open_am_pm, open_timezone)
+            utc_close_str_obj = create_date_strings(req_date, close_time, close_am_pm, close_timezone)
 
+            diff = utc_close_str_obj - utc_open_str_obj
+
+            if diff.total_seconds() < 1:
+                return None
+            else:
+                return utc_close_str_obj
+
+        else:
+            return None
