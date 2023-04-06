@@ -17,4 +17,4 @@ The app contains the below functionality:
     - Inputs data into three seperate tables for quote reporting
     - Sends an email to the Air Exp or EUV team from the user with data inputed so they can generate a quote and send it back to the user
 
-[Transaction Quote Reporting can be accessed at this address]([http://lin2dv2ap209:3001/](https://app.powerbi.com/groups/46ac8c33-5e7f-461c-bf62-b3d551d62a9d/reports/b45e7f89-8d34-4ded-9168-8f16f3efebdf/ReportSection)).
+[Transaction Quote Reporting can be accessed at this address](https://app.powerbi.com/groups/46ac8c33-5e7f-461c-bf62-b3d551d62a9d/reports/b45e7f89-8d34-4ded-9168-8f16f3efebdf/ReportSection).
