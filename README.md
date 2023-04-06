@@ -1,6 +1,6 @@
 # Last Mile Quote Request Tool
 
-An application for CHR Employees to submit prelimary quotes to Air Expedite, Exculsive Use Vehicle, First Mile and Final Mile. This allows data to be stored and reported on to improve the quoting processes for the Last Mile division. 
+An application for CHR Employees to submit prelimary quotes to Air Expedite, Exculsive Use Vehicle, First Mile and Final Mile. This allows data to be stored and reported on to improve the quoting processes for Last Mile Services. 
 
 ## Access and Features
 
