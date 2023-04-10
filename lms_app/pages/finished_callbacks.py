@@ -73,13 +73,19 @@ def add_finished_callbacks(dash):
 
                 scope_to_database = explode_scope_data(scope_to_database)
 
-                print(item_to_database)
+                quote_id = data_to_database['QUOTE_ID'][0]
+                quote_date = data_to_database['QUOTE_DATE'][0]
 
-                write_to_lms_quote(data_to_database)
-                write_to_lms_quote_scope(scope_to_database)
-                write_to_lms_quote_items(item_to_database)
+                if quote_already_exists(quote_id, quote_date) == False:
+                    write_to_lms_quote(data_to_database)
+                    write_to_lms_quote_scope(scope_to_database)
+                    write_to_lms_quote_items(item_to_database)
 
-                return ['']
+                    return ['']
+
+                else:
+                    return html.H4('Your qoute has already been submitted and stored.', 
+                        style={'font-weight':'bold', 'text-align': 'center'})
 
             else:
                 return dcc.Location(pathname="/", id="first-final-redirect")

@@ -35,7 +35,7 @@ def add_air_exp_finished_callbacks(dash):
         if final_data is not None:
             if final_data['TRANSPORTATION_MODE'] in good_modes:
                 final_request_df = pd.DataFrame.from_dict([final_data])
-                nice_request_df = prettify_df(final_request_df)
+                nice_request_df = prettify_df(final_request_df)              
 
                 return [
                     dt.DataTable(
@@ -76,11 +76,18 @@ def add_air_exp_finished_callbacks(dash):
 
                 scope_to_database = pd.concat([pick_scope_to_database, drop_scope_to_database], ignore_index=True)
 
-                write_to_lms_quote(data_to_database)
-                write_to_lms_quote_scope(scope_to_database)
-                write_to_lms_quote_items(item_to_database)
+                quote_id = data_to_database['QUOTE_ID'][0]
+                quote_date = data_to_database['QUOTE_DATE'][0]
 
-                return ['']
+                if quote_already_exists(quote_id, quote_date) == False:
+                    write_to_lms_quote(data_to_database)
+                    write_to_lms_quote_scope(scope_to_database)
+                    write_to_lms_quote_items(item_to_database)
+                    return ['']
+                
+                else:
+                    return html.H4('Your qoute has already been submitted and stored.', 
+                        style={'font-weight':'bold', 'text-align': 'center'})
 
             else:
                 return dcc.Location(pathname="/", id="air-euv-redirect")

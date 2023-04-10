@@ -30,8 +30,6 @@ layout = dbc.Container([
         html.Br(),
         html.Br(),
 
-        dcc.Loading(children = [html.Div(id='prompt')], fullscreen = True),
-
         dbc.Row([
             dbc.Col([
                 html.H4('A representative will be in touch with you shortly. Thank you for completing the form.', 
@@ -48,17 +46,15 @@ layout = dbc.Container([
             ],width={"size": 6, "offset": 3}, md=6, align='stretch'),
         ]),
 
-        #html.Br(),
-        #html.Br(),
-
-        #dbc.Row([
-        #    dbc.Col([
-        #        html.H4('You will receive a confirmation email with this info, please check your deleted folder if it does not arrive within 5 minutes.', 
-        #                style={'font-weight':'bold', 'text-align': 'center'})
-        #    ],width={"size": 10, "offset": 1}, md=10, align='stretch'),
-        #]),
-
         html.Br(),
+        html.Br(),
+
+        dbc.Row([
+            dbc.Col([
+                dcc.Loading(children = [html.Div(id='prompt')], fullscreen = True),
+            ],width={"size": 10, "offset": 1}, md=10, align='stretch'),
+        ]),
+
         html.Br(),
 
     ])

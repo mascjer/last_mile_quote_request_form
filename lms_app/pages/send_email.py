@@ -106,7 +106,8 @@ def send_quote_email(final_store, item_store, scope_store, additional_contacts, 
     smtp_obj.quit()
 
 
-def send_air_euv_email(final_store, item_store, pick_scope_store, drop_scope_store, additional_contacts, pickup_additional_input, drop_additional_input):
+def send_air_euv_email(final_store, item_store, pick_scope_store, drop_scope_store, additional_contacts, 
+                       pickup_additional_input, drop_additional_input, pick_open, pick_close, drop_open, drop_close):
     email_df = pd.DataFrame.from_dict([final_store])
     email_pick_scope_df = pd.DataFrame.from_dict([pick_scope_store])
     email_drop_scope_df = pd.DataFrame.from_dict([drop_scope_store])
@@ -124,6 +125,11 @@ def send_air_euv_email(final_store, item_store, pick_scope_store, drop_scope_sto
     quote_id = email_item_df['QUOTE_ID'][0]
     city = email_df['ORIGIN_CITY'][0]
     state = email_df['ORIGIN_STATE'][0]
+
+    email_df['ORIGIN_OPEN_TIME'][0] = pick_open
+    email_df['ORIGIN_CLOSE_TIME'][0] = pick_close
+    email_df['DESTINATION_OPEN_TIME'][0] = drop_open
+    email_df['DESTINATION_CLOSE_TIME'][0] = drop_close
 
     email_df['TOTAL_WEIGHT'] = total_weight(email_item_df)
 

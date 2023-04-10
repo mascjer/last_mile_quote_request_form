@@ -661,15 +661,36 @@ def add_air_euv_callbacks(dash):
         State("additional-input", "value"),
         State("pickup-addtional-input", "value"),
         State("delivery-addtional-input", "value"),
+        State("req-pick-date", "date"),
+        State("pick-open-time-drop", "value"),
+        State("pick-open-am-pm-drop", "value"),
+        State("pick-open-timezone-drop", "value"),
+        State("pick-close-time-drop", "value"),
+        State("pick-close-am-pm-drop", "value"),
+        State("pick-close-timezone-drop", "value"),
+        State("req-del-date", "date"),
+        State("drop-open-time-drop", "value"),
+        State("drop-open-am-pm-drop", "value"),
+        State("drop-open-timezone-drop", "value"),
+        State("drop-close-time-drop", "value"),
+        State("drop-close-am-pm-drop", "value"),
+        State("drop-close-timezone-drop", "value"),
     )
     def send_data(n_clicks, final_data_storage_display, final_data, pick_scope_storage, drop_scope_storage, item_storage, 
-                  additional_contacts, pickup_additional_input, drop_additional_input):
+                  additional_contacts, pickup_additional_input, drop_additional_input, req_pick, pick_open_time, pick_open_am_pm, 
+                  pick_open_timezone, pick_close_time, pick_close_am_pm, pick_close_timezone, req_drop, open_drop_time, open_drop_am_pm, 
+                  open_drop_timezone,close_drop_time, close_drop_am_pm, close_drop_timezone):
         if n_clicks > 0:
             print('----------data----------')
             print(final_data_storage_display)
             print(n_clicks)
             print('after data n clicks:', n_clicks)
             print('------------------------')
+
+            pick_open = get_local_time(req_pick, pick_open_time, pick_open_am_pm, pick_open_timezone)
+            pick_close = get_local_time(req_pick,pick_close_time, pick_close_am_pm, pick_close_timezone)
+            drop_open = get_local_time(req_drop, open_drop_time, open_drop_am_pm, open_drop_timezone)
+            drop_close = get_local_time(req_drop, close_drop_time, close_drop_am_pm, close_drop_timezone)    
 
             columns_to_drop = ['LOAD_NUM']
             missing_list = []
@@ -706,7 +727,9 @@ def add_air_euv_callbacks(dash):
             if len(missing_list) != 0:
                 return final_data, pick_scope_storage, drop_scope_storage, item_storage, html.P(missing_str, style={'font-weight':'bold', 'text-align': 'center', 'color': 'red'})
             else:
-                send_air_euv_email(final_data, item_storage, pick_scope_storage, drop_scope_storage, additional_contacts, pickup_additional_input, drop_additional_input)
+                send_air_euv_email(final_data, item_storage, pick_scope_storage, drop_scope_storage, 
+                                   additional_contacts, pickup_additional_input, drop_additional_input, 
+                                   pick_open, pick_close, drop_open, drop_close)
                 return final_data, pick_scope_storage, drop_scope_storage, item_storage, dcc.Location(pathname="/air_exp_finished", id="finished-page")
         
         else:
@@ -749,5 +772,18 @@ def add_air_euv_callbacks(dash):
             else:
                 return utc_close_str_obj
 
+        else:
+            return None
+
+
+    def get_local_time(req_date, req_time, am_pm, timezone):
+        date_valid = valid_input(req_date)
+        time_valid = valid_input(req_time)
+        am_pm_valid = valid_input(am_pm)
+        timezone_valid = valid_input(timezone)
+
+        if date_valid == True and time_valid == True and am_pm_valid == True and timezone_valid == True:
+            local_date_string = create_local_date_strings(req_date, req_time, am_pm, timezone)
+            return local_date_string
         else:
             return None

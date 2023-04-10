@@ -68,6 +68,30 @@ def check_emp_codes(empcode):
         return False
     else:
         return True
+    
+
+### function to check if quote exusts
+def quote_already_exists(quote_id, quote_date):
+    if quote_id is None:
+        quote_id = ''
+
+    if quote_date is None:
+        quote_date = ''
+    
+    query_string = "SELECT QUOTE_ID FROM SANDBOX_NAST_LTL_DOMAIN.BASE.LMS_QUOTE WHERE QUOTE_ID = '{}' AND QUOTE_DATE = '{}'".format(quote_id, quote_date)
+
+    print(query_string)
+
+    con = get_snowflake_connection()
+
+    quotes = pd.read_sql(query_string, con)
+
+    con.close()
+
+    if quotes.empty:
+        return False
+    else:
+        return True
 
 
 ### function used to write to LMS_QUOTE_SCOPE

@@ -145,8 +145,6 @@ def check_for_invalids(items):
 def check_for_nones(scopes):
     return None not in scopes.values()
 
-   
-
 
 ### USED AIR_EUV_CALLBACKS, FIRST_FINAL_CALLBACKS ###
 def wait_for_codes(request_df, ccode, empcode):
@@ -193,6 +191,31 @@ def create_date_strings(date, time, am_pm, timezone):
     utc_date_str_obj = timezone_adjust(date_str_obj, timezone)
 
     return utc_date_str_obj
+
+
+### USED AIR_EUV_CALLBACKS ###
+def create_local_date_strings(date, time, am_pm, timezone):
+    if timezone == 'America/New_York':
+        timezone_adjust = 'ET'
+    elif timezone == 'America/Chicago':
+        timezone_adjust = 'CT'
+    elif timezone == 'America/Denver':
+        timezone_adjust = 'MT'
+    elif timezone == 'America/Phoenix':
+        timezone_adjust = 'MST (AZ)'
+    elif timezone == 'America/Los_Angeles':
+        timezone_adjust = 'PT'
+    elif timezone == 'America/Anchorage':
+        timezone_adjust = 'AK'
+    elif timezone == 'Pacific/Honolulu':
+        timezone_adjust = 'HAST'
+    else:
+        timezone_adjust = ''
+
+
+    date_str = date + ' ' + time + ' ' + am_pm + ' ' + timezone_adjust
+
+    return date_str
 
 
 ### USED AIR_EUV_CALLBACKS ###
