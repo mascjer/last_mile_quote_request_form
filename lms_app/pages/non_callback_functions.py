@@ -104,9 +104,8 @@ def check_zip_code(S):
                 return False
 
 
-### USED SHARED_CALLBACKS ###
+### USED ALL CALLBACKS ###
 def check_email_string(S):
-    print(S)
     if S is None:
         return False
     elif S == '':
@@ -244,7 +243,7 @@ def create_time_false_list(time_exists, am_pm_exists, tz_exists):
     return false_list
 
 
-### USED FIRST_FiNAL_CALLBACKS ###
+### USED FIRST_FINAL_CALLBACKS/LOCAL PICK AND DELIVERY ###
 def check_phone_number(S):
     if S is None:
         return False
@@ -399,5 +398,55 @@ def create_quote_id(empcode,quote_date):
 
     quote_id = quote_id.upper()
 
-
     return quote_id
+
+# returns a local time string for the email
+def get_local_time(req_date, req_time, am_pm, timezone):
+    date_valid = valid_input(req_date)
+    time_valid = valid_input(req_time)
+    am_pm_valid = valid_input(am_pm)
+    timezone_valid = valid_input(timezone)
+
+    if date_valid == True and time_valid == True and am_pm_valid == True and timezone_valid == True:
+        local_date_string = create_local_date_strings(req_date, req_time, am_pm, timezone)
+        return local_date_string
+    else:
+        return None
+    
+
+#returns the time in central for the quote date part of the email
+def convert_utc_to_central_string(utc_time):
+    """
+    Convert a UTC datetime to Central time using the pytz module, and return it as a string with just the timezone abbreviation.
+    
+    Parameters:
+    -----------
+    utc_time : datetime.datetime
+        The UTC datetime to convert
+        
+    Returns:
+    --------
+    str
+        The Central datetime as a string with just the timezone abbreviation
+    """
+    # Define the UTC and Central timezones
+    utc_tz = pytz.timezone('UTC')
+    central_tz = pytz.timezone('US/Central')
+    
+    # Convert the UTC time to the Central timezone
+    utc_time = utc_tz.localize(utc_time)
+    central_time = utc_time.astimezone(central_tz)
+    
+    # Convert the Central time to a string with the timezone abbreviation
+    central_time_str = central_time.strftime('%m/%d/%Y %H:%M %Z')
+    
+    return central_time_str
+
+
+### returns string with capilatized letters
+### for seven letters, customer codes, and warehouse codes
+def capitalize_all(string):
+    if string is None or len(string) == 0:
+        return string
+    else:
+        return string.upper()

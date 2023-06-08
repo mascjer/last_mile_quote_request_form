@@ -133,6 +133,9 @@ def add_first_final_callbacks(dash):
         prevent_intial_call=True
     )
     def enable_disable_freight_elevator(first_floor, freight_elevator):
+        if first_floor == '':
+            first_floor = None
+            
         if first_floor == None:
             True, None
         else:
@@ -166,7 +169,7 @@ def add_first_final_callbacks(dash):
     )
     def check_freight_elevator(n_clicks, first_floor, freight_elavator):
         if n_clicks > 0:
-            if first_floor == True:
+            if first_floor == False:
                 freight_elavator_exists = valid_input(freight_elavator)
                 if freight_elavator_exists == False:
                     return html.P('Select yes or no', style={'font-weight':'bold', 'color': 'red', 'margin-top':'0.5%', 'margin-bottom':'0%'})
@@ -245,7 +248,6 @@ def add_first_final_callbacks(dash):
             if phone_exists == True:
                 if phone_valid == False:
                     false_list.append('Contact Phone Number (XXX) XXX-XXXX')
-                    import_phone(None)
 
             if email_exists == True:
                 if email_valid == False:
@@ -480,17 +482,17 @@ def add_first_final_callbacks(dash):
 
                 return [], {'QUOTE_ID': quote_id, 'TRANSPORTATION_MODE': pd.read_json(data_storage, orient = 'split')['TRANSPORTATION_MODE'].iloc[0],  
                             'SERVICE': pd.read_json(data_storage, orient = 'split')['SERVICE'].iloc[0],  
-                            'CUSTOMER_CODE': ccode,'SEVEN_LETTER': empcode, 'QUOTE_OR_ON_HAND': quote_or_on_hand,
+                            'CUSTOMER_CODE': capitalize_all(ccode),'SEVEN_LETTER': capitalize_all(empcode), 'QUOTE_OR_ON_HAND': quote_or_on_hand,
                             'ADDITIONAL_INSURANCE': additional_insurance, 'VALUE': get_value(additional_insurance, value), 'COMMODITY':commodity, 
                             'PACKAGING': get_packaging(palletized, packaging), 'IS_HAZ_MAT':hazmat, 'UN_NUMBER':un, 'CLASS_NUMBER':haz_class, 
                             'PACKING_GROUP_NUMBER':packing, 'ADDITIONAL_SUPPORT_NEEDED':get_additional_support(additional_support), 
                             'IS_PALLETIZED':palletized, 'FIRST_FLOOR_PICKUP':first_floor,'HAS_FREIGHT_ELEVATOR':freight_elevator,
                             'CONTACT_NAME':contact_name, 'CONTACT_PHONE':contact_phone, 'CONTACT_EMAIL':contact_email,
-                            'WAREHOUSE_CODE':wcode, 'WAREHOUSE_ADDRESS':address, 'WAREHOUSE_CITY':city, 'WAREHOUSE_STATE':state,
+                            'WAREHOUSE_CODE':capitalize_all(wcode), 'WAREHOUSE_ADDRESS':address, 'WAREHOUSE_CITY':city, 'WAREHOUSE_STATE':capitalize_all(state),
                             'WAREHOUSE_ZIP':zip, 'TIME_EXPECTATION':get_date_exp(date_exp, date_exp_date), 'QUOTE_DATE':quote_date
                             }, {'QUOTE_ID':quote_id, 'TRANSPORTATION_MODE': pd.read_json(data_storage, orient = 'split')['TRANSPORTATION_MODE'].iloc[0],  
                             'SERVICE': pd.read_json(data_storage, orient = 'split')['SERVICE'].iloc[0],  
-                            'CUSTOMER_CODE': ccode,'SEVEN_LETTER': empcode, 'QUOTE_OR_ON_HAND': quote_or_on_hand,
+                            'CUSTOMER_CODE': capitalize_all(ccode),'SEVEN_LETTER': capitalize_all(empcode), 'QUOTE_OR_ON_HAND': quote_or_on_hand,
                             'ADDITIONAL_INSURANCE': additional_insurance, 'VALUE': get_value(additional_insurance, value), 'COMMODITY':commodity, 
                             'PACKAGING': get_packaging(palletized, packaging), 'IS_HAZ_MAT':hazmat, 'UN_NUMBER':un, 'CLASS_NUMBER':haz_class, 
                             'PACKING_GROUP_NUMBER':packing, 'ADDITIONAL_SUPPORT_NEEDED':get_additional_support(additional_support), 
@@ -501,7 +503,7 @@ def add_first_final_callbacks(dash):
                             'IS_STACKABLE':None, 'CAUSE_LINE_DOWN':None, 'CAN_BREAKDOWN':None, 
                             'IS_PALLETIZED':palletized, 'FIRST_FLOOR_PICKUP':first_floor,'HAS_FREIGHT_ELEVATOR':freight_elevator,
                             'CONTACT_NAME':contact_name, 'CONTACT_PHONE':contact_phone, 'CONTACT_EMAIL':contact_email,
-                            'WAREHOUSE_CODE':wcode, 'WAREHOUSE_ADDRESS':address, 'WAREHOUSE_CITY':city, 'WAREHOUSE_STATE':state,
+                            'WAREHOUSE_CODE':capitalize_all(wcode), 'WAREHOUSE_ADDRESS':address, 'WAREHOUSE_CITY':city, 'WAREHOUSE_STATE':capitalize_all(state),
                             'WAREHOUSE_ZIP':zip, 'TIME_EXPECTATION':get_date_exp(date_exp, date_exp_date), 'QUOTE_DATE':quote_date
                             }, {'QUOTE_ID': quote_id, 'STOP_TYPE': 'first_final', 'SCOPE': parse_scopes(scope, other)}, prelim_item_storage
             else:
@@ -591,6 +593,7 @@ def add_first_final_callbacks(dash):
             missing_str = 'These entries are missing: ' + missing_str + '.'
 
             time.sleep(3)
+
 
             if len(missing_list) != 0:
                     return final_data, scope_storage, item_storage, html.P(missing_str, style={'font-weight':'bold', 'text-align': 'center', 'color': 'red'})

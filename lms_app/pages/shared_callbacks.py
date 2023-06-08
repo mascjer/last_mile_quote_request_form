@@ -32,31 +32,35 @@ def add_shared_callbacks(app):
         Output('euv-btn','n_clicks'),
         Output('first-btn','n_clicks'),
         Output('final-btn','n_clicks'),
+        Output('pick-drop-btn','n_clicks'),
         Input('air-btn','n_clicks'),
         Input('euv-btn','n_clicks'),
         Input('first-btn','n_clicks'),
         Input('final-btn','n_clicks'),
+        Input('pick-drop-btn','n_clicks'),
     )
-    def get_trans_mode(air, euv, first, final):
+    def get_trans_mode(air, euv, first, final, local_pick_drop):
         
         clear_dataframe()
 
         trans_mode = None
-        if air == 1 and euv+first+final == 0:
+        if air == 1 and euv+first+final+local_pick_drop == 0:
             trans_mode = 'air_expedite'
-        if euv == 1 and air+first+final == 0:
+        if euv == 1 and air+first+final+local_pick_drop == 0:
             trans_mode = 'exclusive_use_vehicle'
-        if first == 1 and air+euv+final == 0:
+        if first == 1 and air+euv+final+local_pick_drop == 0:
             trans_mode = 'first_mile'
-        if final == 1 and air+euv+first == 0:
+        if final == 1 and air+euv+first+local_pick_drop == 0:
             trans_mode = 'final_mile'
+        if local_pick_drop == 1 and air+euv+first+final == 0:
+            trans_mode = 'local_pick_and_delivery'
         
         cols = {'TRANSPORTATION_MODE':[None]}
         df = pd.DataFrame(cols)
 
         df['TRANSPORTATION_MODE'] = trans_mode
         
-        return df.to_json(date_format='iso', orient='split'), 0,0,0,0
+        return df.to_json(date_format='iso', orient='split'), 0,0,0,0,0
 
 
     @app.callback(

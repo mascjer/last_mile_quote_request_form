@@ -10,16 +10,15 @@ from flask import Flask
 from time import sleep
 from datetime import date
 import pages.ui_assets as ui
-from pages.air_euv_callbacks import add_air_euv_callbacks
-
+from pages.local_pick_delivery_callbacks import add_local_pick_delivery_callbacks
 
 
 dash.register_page(__name__, 
-                    path='/air_euv',
+                    path='/local_pick_delivery',
                     title='Last Mile: Quote Request Form',
                     name='Last Mile: Quote Request Form')
 
-add_air_euv_callbacks(dash)
+add_local_pick_delivery_callbacks(dash)
 
 
 layout = dbc.Container([
@@ -30,9 +29,9 @@ layout = dbc.Container([
     html.Div(style={'border-width':'1px', 'border-style':'solid', 'border-color':'black', 'border-top-width': '0px'}, children = [
         html.Br(),
 
-        dbc.Row([
+         dbc.Row([
             dbc.Col([
-                ui.create_air_euv(),
+                ui.create_local_pick_delivery(),
             ],width={"size": 11, "offset": 1}, md=12, align='stretch'),
         ]),
 
@@ -55,7 +54,7 @@ layout = dbc.Container([
          dbc.Row([
             dbc.Col([
                 dbc.Row([
-                    html.P('For any questions, please reach out to Airdomestic@chrobinson.com.', style={'font-weight':'bold', 'font-style' : 'italic', 'text-align': 'center'})
+                    html.P('For any questions, please reach out to LMCapacityTeam@chrobinson.com', style={'font-weight':'bold', 'font-style' : 'italic', 'text-align': 'center'})
                 ])
             ], md=12, align='stretch'),
         ]),
@@ -65,13 +64,13 @@ layout = dbc.Container([
 
         dbc.Row([
             dbc.Col([
-                html.Div(id='output_air_euv')
+                html.Div(id='output_local_pick_delivery')
             ],width={"size": 11, "offset": 1}, md=10, align='stretch'),
         ]),
 
         html.Br(),
         html.Br(),
-
+        
     ])
 
 ])

@@ -48,6 +48,9 @@ def serve_layout():
     #first data store for transmode
     dcc.Store(id='data-storage'),
 
+    #first data store for items
+    dcc.Store(id='data-storage-prelim-item'), #temp data storage for items
+
     #first data storage for first/final mile items
     dcc.Store(id='data-storage-item'),
 
@@ -56,7 +59,6 @@ def serve_layout():
     dcc.Store(id='data-storage-ffm-display'), #data storage for display to user
     dcc.Store(id='data-storage-ffm-final'), #temp data storage for input into database
     dcc.Store(id='data-storage-ffm-prelim-scope'), #temp data storage for scope
-    dcc.Store(id='data-storage-prelim-item'), #temp data storage for items
     dcc.Store(id='data-storage-scope-final', storage_type='session'), #data storage that holds scope data to be inputted into db
     dcc.Store(id='data-storage-item-final', storage_type='session'), #data storage that holds item data to be inputted into db
     dcc.Store(id='data-storage-final', storage_type='session'), #data storage that holds contextual data to be inputted into db
@@ -73,6 +75,20 @@ def serve_layout():
     dcc.Store(id='data-storage-pick-scope-final', storage_type='session'), #data storage that holds pick scope data to be inputted into db
     dcc.Store(id='data-storage-drop-scope-final', storage_type='session'), #data storage that holds drop scope data to be inputted into db
     dcc.Store(id='data-storage-ae-item-final', storage_type='session'), #data storage that holds item data to be inputted into db
+
+    #firt data stoage for items in local pick/del
+    dcc.Store(id='data-storage-pd-item'),
+
+    #local pick/delivery
+    dcc.Store(id='data-storage-2'), # temp data storage for transmode/service when local pick and del is selected
+    dcc.Store(id='data-storage-pd-display'), #data storage for display to user
+    dcc.Store(id='data-storage-pd-final'), #temp data storage for input into database
+    dcc.Store(id="data-storage-pd-prelim-pick-scope"), #temp data storage for pick scope
+    dcc.Store(id="data-storage-pd-prelim-drop-scope"), #temp data storage for drop scope
+    dcc.Store(id='data-storage-final-session-pd', storage_type='session'), #data storage that holds contextual data to be inputted into db
+    dcc.Store(id='data-storage-pick-scope-final-pd', storage_type='session'), #data storage that holds pick scope data to be inputted into db
+    dcc.Store(id='data-storage-drop-scope-final-pd', storage_type='session'), #data storage that holds drop scope data to be inputted into db
+    dcc.Store(id='data-storage-item-final-pd', storage_type='session'), #data storage that holds item data to be inputted into db
 ])
 
 app.layout = serve_layout()
@@ -81,4 +97,4 @@ add_shared_callbacks(app)
 
 #run app
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port=8050)
+    app.run_server(debug=False, host='0.0.0.0', port=8050)

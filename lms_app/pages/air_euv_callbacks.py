@@ -603,16 +603,16 @@ def add_air_euv_callbacks(dash):
                 prelim_item_storage = {k : prelim_item_storage[k] for k in key_order}
 
                 return [],{'QUOTE_ID':quote_id, 'TRANSPORTATION_MODE': pd.read_json(data_storage, orient = 'split')['TRANSPORTATION_MODE'].iloc[0],  
-                            'CUSTOMER_CODE': ccode,'SEVEN_LETTER': empcode, 'QUOTE_OR_ON_HAND': quote_or_on_hand,
+                            'CUSTOMER_CODE': capitalize_all(ccode),'SEVEN_LETTER': capitalize_all(empcode), 'QUOTE_OR_ON_HAND': quote_or_on_hand,
                             'ADDITIONAL_INSURANCE': additional_insurance, 'VALUE': get_value(additional_insurance, value), 'COMMODITY':commodity, 
                             'PACKAGING': get_packaging(palletized, packaging), 'IS_HAZ_MAT':hazmat, 'UN_NUMBER':un, 'CLASS_NUMBER':haz_class, 
                             'PACKING_GROUP_NUMBER':packing, 'ADDITIONAL_SUPPORT_NEEDED':get_additional_support(additional_support), 
-                            'LOAD_NUM':load_num,  'ORIGIN_CITY':org_city, 'ORIGIN_STATE':org_state, 'ORIGIN_ZIP':org_zip, 
+                            'LOAD_NUM':load_num,  'ORIGIN_CITY':org_city, 'ORIGIN_STATE':capitalize_all(org_state), 'ORIGIN_ZIP':org_zip, 
                             'REQUESTED_PICKUP_DATE': req_pick, 
                             'ORIGIN_OPEN_TIME': get_open_time(req_pick, pick_open_time, pick_open_am_pm, pick_open_timezone),  
                             'ORIGIN_CLOSE_TIME': get_close_time(req_pick, pick_open_time, pick_open_am_pm, pick_open_timezone, 
                                                                     pick_close_time, pick_close_am_pm, pick_close_timezone), 
-                            'DESTINATION_CITY':dest_city, 'DESTINATION_STATE':dest_state, 'DESTINATION_ZIP':dest_zip, 
+                            'DESTINATION_CITY':dest_city, 'DESTINATION_STATE': capitalize_all(dest_state), 'DESTINATION_ZIP':dest_zip, 
                             'REQUESTED_DELIVERY_DATE':req_drop, 
                             'DESTINATION_OPEN_TIME': get_open_time(req_drop, open_drop_time, open_drop_am_pm, open_drop_timezone),  
                             'DESTINATION_CLOSE_TIME': get_close_time(req_drop, open_drop_time, open_drop_am_pm, open_drop_timezone, 
@@ -620,16 +620,16 @@ def add_air_euv_callbacks(dash):
                             'IS_STACKABLE':stackable, 'CAUSE_LINE_DOWN':situation, 'CAN_BREAKDOWN':breakdown, 'IS_PALLETIZED':palletized, 
                             'QUOTE_DATE': quote_date
                             }, {'QUOTE_ID':quote_id, 'TRANSPORTATION_MODE': pd.read_json(data_storage, orient = 'split')['TRANSPORTATION_MODE'].iloc[0],  
-                            'SERVICE': None, 'CUSTOMER_CODE': ccode,'SEVEN_LETTER': empcode, 'QUOTE_OR_ON_HAND': quote_or_on_hand,
+                            'SERVICE': None, 'CUSTOMER_CODE': capitalize_all(ccode),'SEVEN_LETTER': capitalize_all(empcode), 'QUOTE_OR_ON_HAND': quote_or_on_hand,
                             'ADDITIONAL_INSURANCE': additional_insurance, 'VALUE': get_value(additional_insurance, value), 'COMMODITY':commodity, 
                             'PACKAGING': get_packaging(palletized, packaging), 'IS_HAZ_MAT':hazmat, 'UN_NUMBER':un, 'CLASS_NUMBER':haz_class, 
                             'PACKING_GROUP_NUMBER':packing, 'ADDITIONAL_SUPPORT_NEEDED':get_additional_support(additional_support), 
-                            'LOAD_NUM':load_num,  'ORIGIN_CITY':org_city, 'ORIGIN_STATE':org_state, 'ORIGIN_ZIP':org_zip, 
+                            'LOAD_NUM':load_num,  'ORIGIN_CITY':org_city, 'ORIGIN_STATE': capitalize_all(org_state), 'ORIGIN_ZIP':org_zip, 
                             'REQUESTED_PICKUP_DATE': req_pick, 
                             'ORIGIN_OPEN_TIME': get_open_time(req_pick, pick_open_time, pick_open_am_pm, pick_open_timezone),
                             'ORIGIN_CLOSE_TIME': get_close_time(req_pick, pick_open_time, pick_open_am_pm, pick_open_timezone, 
                                                                     pick_close_time, pick_close_am_pm, pick_close_timezone),  
-                            'DESTINATION_CITY':dest_city, 'DESTINATION_STATE':dest_state, 'DESTINATION_ZIP':dest_zip, 
+                            'DESTINATION_CITY':dest_city, 'DESTINATION_STATE': capitalize_all(dest_state), 'DESTINATION_ZIP':dest_zip, 
                             'REQUESTED_DELIVERY_DATE':req_drop, 
                             'DESTINATION_OPEN_TIME': get_open_time(req_drop, open_drop_time, open_drop_am_pm, open_drop_timezone),  
                             'DESTINATION_CLOSE_TIME': get_close_time(req_drop, open_drop_time, open_drop_am_pm, open_drop_timezone, 
@@ -772,18 +772,5 @@ def add_air_euv_callbacks(dash):
             else:
                 return utc_close_str_obj
 
-        else:
-            return None
-
-
-    def get_local_time(req_date, req_time, am_pm, timezone):
-        date_valid = valid_input(req_date)
-        time_valid = valid_input(req_time)
-        am_pm_valid = valid_input(am_pm)
-        timezone_valid = valid_input(timezone)
-
-        if date_valid == True and time_valid == True and am_pm_valid == True and timezone_valid == True:
-            local_date_string = create_local_date_strings(req_date, req_time, am_pm, timezone)
-            return local_date_string
         else:
             return None
