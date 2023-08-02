@@ -32,7 +32,10 @@ dest_states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CAN', 'CO', 'CT', 'DE', 'FL', 'GA'
           'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV',
           'WI', 'WY'] 
 
-
+#used in items selection
+label_text = "Weight per Piece (pounds)"
+parts = label_text.split("per")
+piece_parts = parts[1].split("Piece")
 
 timezones = {'Eastern': 'America/New_York',
             'Central': 'America/Chicago',
@@ -481,6 +484,7 @@ def create_air_euv():
             html.Br(),
 
             dbc.Label("15.What are the unique quantites, weights and dimensions of the freight?*"),
+
             html.Div(id='input-prompt', children=[
                 html.Br(),
                 dbc.Row([
@@ -493,7 +497,16 @@ def create_air_euv():
                                 dbc.Label('Quantity',style={'font-weight':'bold', 'text-align': 'center'})
                             ],md= 2),
                             dbc.Col([
-                                dbc.Label('Weight per Piece (pounds)',style={'font-weight':'bold', 'text-align': 'center'})
+                                dbc.Label(
+                                    [
+                                        parts[0],
+                                        html.Span("per", style={'color': 'red'}),
+                                        piece_parts[0],
+                                        html.Span("Piece", style={'color': 'red'}),
+                                        piece_parts[1]
+                                    ],
+                                    style={'font-weight': 'bold', 'text-align': 'center'}
+                                )
                             ],md= 2),
                             dbc.Col([
                                 dbc.Label('Length (inches)',style={'font-weight':'bold', 'text-align': 'center'})
@@ -655,7 +668,7 @@ def create_air_euv():
             options=[
                 {'label': 'After or Before Hours Pickup', 'value': 'after_or_before_hours_pickup'},
                 {'label': 'Afternoon Special Pickup', 'value': 'afternoon_special_pickup'},
-                {'label': 'Pickup Appointment/Special', 'value': 'pickup_appoinment/special'},
+                {'label': 'Pickup Appointment/Special', 'value': 'pickup_appointment/special'},
                 {'label': 'Convention Center Pickup', 'value': 'convention_center_pickup'},
                 {'label': 'Extra Man Pickup **will be calculated after service is performed', 'value': 'extra_man_pickup'},
                 {'label': 'Hospital Pickup', 'value': 'hospital_pickup'},
@@ -687,7 +700,7 @@ def create_air_euv():
             options=[
                 {'label': 'After or Before Hours Delivery', 'value': 'after_or_before_hours_delivery'},
                 {'label': 'Afternoon Special Delivery', 'value': 'afternoon_special_delivery'},
-                {'label': 'Delivery Appointment/Special', 'value': 'delivery_appoinment/special'},
+                {'label': 'Delivery Appointment/Special', 'value': 'delivery_appointment/special'},
                 {'label': 'Convention Center Delivery', 'value': 'convention_center_delivery'},
                 {'label': 'Extra Man Delivery **will be calculated after service is performed', 'value': 'extra_man_delivery'},
                 {'label': 'Hospital Delivery', 'value': 'hospital_delivery'},
@@ -1024,7 +1037,16 @@ def create_first_final():
                             dbc.Label('Quantity',style={'font-weight':'bold', 'text-align': 'center'})
                         ],md= 2),
                         dbc.Col([
-                            dbc.Label('Weight per Piece (pounds)',style={'font-weight':'bold', 'text-align': 'center'})
+                            dbc.Label(
+                                    [
+                                        parts[0],
+                                        html.Span("per", style={'color': 'red'}),
+                                        piece_parts[0],
+                                        html.Span("Piece", style={'color': 'red'}),
+                                        piece_parts[1]
+                                    ],
+                                    style={'font-weight': 'bold', 'text-align': 'center'}
+                                )
                         ],md= 2),
                         dbc.Col([
                             dbc.Label('Length (inches)',style={'font-weight':'bold', 'text-align': 'center'})
@@ -1564,7 +1586,16 @@ def create_local_pick_delivery():
                             dbc.Label('Quantity',style={'font-weight':'bold', 'text-align': 'center'})
                         ],md= 2),
                         dbc.Col([
-                            dbc.Label('Weight per Piece (pounds)',style={'font-weight':'bold', 'text-align': 'center'})
+                            dbc.Label(
+                                    [
+                                        parts[0],
+                                        html.Span("per", style={'color': 'red'}),
+                                        piece_parts[0],
+                                        html.Span("Piece", style={'color': 'red'}),
+                                        piece_parts[1]
+                                    ],
+                                    style={'font-weight': 'bold', 'text-align': 'center'}
+                                )
                         ],md= 2),
                         dbc.Col([
                             dbc.Label('Length (inches)',style={'font-weight':'bold', 'text-align': 'center'})

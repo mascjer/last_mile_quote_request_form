@@ -68,7 +68,7 @@ def determine_recipient(trans_mode):
     if trans_mode == 'air_expedite':
         return 'Airdomestic@chrobinson.com'
     elif trans_mode == 'exclusive_use_vehicle':
-        return 'Airdomestic@chrobinson.com'
+        return 'next@chrobinson.com'
     elif trans_mode == 'first_mile':
         return 'Lastmilequotes@chrobinson.com'
     elif trans_mode == 'final_mile':

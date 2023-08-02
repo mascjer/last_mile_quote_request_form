@@ -10,7 +10,7 @@ from connections import get_snowflake_connection
 def check_c_codes(ccode):
     if ccode is None:
         ccode = ''
-    c_string = "SELECT CUSTOMER_PARTY_CODE FROM SANDBOX_ENTERPRISE_REFERENCE_DOMAIN.BROKER.REF_CUSTOMER WHERE CUSTOMER_PARTY_CODE = '" + ccode + "'"
+    c_string = "SELECT CUSTOMER_PARTY_CODE FROM ENTERPRISE_REFERENCE_DOMAIN.BROKER.REF_CUSTOMER WHERE CUSTOMER_PARTY_CODE = '" + ccode + "'"
     
     con = get_snowflake_connection() #create connection
     c_codes = pd.read_sql(c_string, con)
@@ -56,7 +56,7 @@ def check_w_codes(wcode):
 def check_emp_codes(empcode):
     if empcode is None:
         empcode = ''
-    emp_string = "SELECT SEVEN_LETTER FROM SANDBOX_ENTERPRISE_REFERENCE_DOMAIN.BROKER.REF_WORKER WHERE SEVEN_LETTER ='" + empcode + "'"
+    emp_string = "SELECT SEVEN_LETTER FROM ENTERPRISE_REFERENCE_DOMAIN.BROKER.REF_WORKER WHERE SEVEN_LETTER ='" + empcode + "'"
 
     con = get_snowflake_connection()
 
