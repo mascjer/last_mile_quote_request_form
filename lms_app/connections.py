@@ -12,8 +12,10 @@ import dash
 
 def get_snowflake_connection():
 # Connection details
-    USER = os.environ['USER']
-    PASSWORD = os.environ['PASSWORD']
+    #USER = os.environ['USER']
+    #PASSWORD = os.environ['PASSWORD']
+    USER = 'MASCJER'
+    PASSWORD = 'LucySnickers!1216'
     ACCOUNT = "sandbox_chrobinson.east-us-2.azure"
     WAREHOUSE = "SURFACETRANS_WAREHOUSE"
     SCHEMA = "BASE"
@@ -23,6 +25,8 @@ def get_snowflake_connection():
 
     # Get client token
     resp = requests.post(f"{VAULT_URL}/v1/auth/okta/login/{USER.lower()}", json={"password": PASSWORD}, verify=False)
+    print(f"{VAULT_URL}/v1/auth/okta/login/{USER.lower()}")
+    print(resp)
     assert resp.status_code == 200, "Failed to get client token"
     client_token = resp.json()["auth"]["client_token"]
     # Get leased password
